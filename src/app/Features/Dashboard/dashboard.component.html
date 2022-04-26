@@ -1,0 +1,34 @@
+<div class="container">
+    <h1>Dashboard</h1>
+
+    <div class="diagram"><strong>Wypasiony wykres Flow(m, S, P, E)</strong></div>
+
+    <div class="row">
+        <div class="col-4">
+            <strong>Aktywa, pasywa</strong>
+            <div *ngFor="let state of flow.states">{{ state.name }}{{ state.value }}</div>
+            <span *ngIf="!isAddingState" (click)="isAddingState = true" class="hoverable">Dodaj</span>
+            <div *ngIf="isAddingState">
+                <div class="form-group">
+                    <label>Nazwa</label>
+                    <input type="text" class="form-control" [(ngModel)]="stateToAdd.name"/>
+                </div>
+                <div class="form-group">
+                    <label>Kwota</label>
+                    <input type="text" class="form-control" [(ngModel)]="stateToAdd.value"/>
+                </div>
+                <button class="btn btn-primary" (click)="addState(stateToAdd)">OK</button>
+            </div>
+        </div>
+        <div class="col-4">
+            <strong>Przychody</strong>
+            <div *ngFor="let profit of flow.profits">{{ profit.value }}</div>
+            <span *ngIf="!isAddingProfit" (click)="isAddingProfit = true" class="hoverable">Dodaj</span>
+        </div>
+        <div class="col-4">
+            <strong>Wydatki</strong>
+            <div *ngFor="let expense of flow.expenses">{{ expense.value }}</div>
+            <span *ngIf="!isAddingExpense" (click)="isAddingExpense = true" class="hoverable">Dodaj</span>
+        </div>
+    </div>
+</div>

@@ -75,7 +75,9 @@
               "browserTarget": "RGFinance:build:production"
             },
             "development": {
-              "browserTarget": "RGFinance:build:development"
+              "browserTarget": "RGFinance:build:development",
+              "port": 4300,
+              "proxyConfig": "proxy/proxy.json"
             }
           },
           "defaultConfiguration": "development"
