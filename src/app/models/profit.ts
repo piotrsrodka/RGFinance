@@ -1,6 +1,10 @@
-import { Rate } from "./rate";
-import { ValueObject } from "./valueObject";
+import { Rate } from './rate';
+import { ValueObject } from './valueObject';
 
 export interface Profit extends ValueObject {
-    rate: Rate;
+  rate: Rate;
+  isInterestProfit: boolean;
+
+  // View model
+  isEditing: boolean;
 }

@@ -3,4 +3,7 @@ import { ValueObject } from "./valueObject";
 
 export interface Expense extends ValueObject {
     rate: Rate;
+
+    // View model
+    isEditing: boolean;
 }

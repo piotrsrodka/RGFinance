@@ -1,34 +1,96 @@
-<div class="container">
+<div class="container wide">
     <h1>Dashboard</h1>
 
-    <div class="diagram"><strong>Wypasiony wykres Flow(m, S, P, E)</strong></div>
+    <span>USD: {{ forex?.usd.toFixed(3) }} PLN, EUR: {{ forex?.eur.toFixed(3) }} PLN, GOLD: {{ forex?.gold.toFixed(0) }}
+        PLN</span>
+
+    <div class="diagram">
+        <div class="">
+            <strong>&fnof;(<input class="month-input" [(ngModel)]="months" type="number" (change)="getFlow()" />, S, P,
+                W) =
+                &sum;S<sub>i</sub> + m * ( &sum;P<sub>i</sub> - &sum;W<sub>i</sub> )
+            </strong>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <strong>Bilans miesięczny: <span [ngClass]="getBalanceColor()">{{ getBalance() | number: '1.0-2'
+                    }}</span></strong>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBancruptcy() }}</strong>
+        </div>
+        <br />
+        <!-- <canvas id="flow-canvas" width="600" height="200"></canvas> -->
+        <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+    </div>
 
     <div class="row">
         <div class="col-4">
-            <strong>Aktywa, pasywa</strong>
-            <div *ngFor="let state of flow.states">{{ state.name }}{{ state.value }}</div>
-            <span *ngIf="!isAddingState" (click)="isAddingState = true" class="hoverable">Dodaj</span>
-            <div *ngIf="isAddingState">
-                <div class="form-group">
-                    <label>Nazwa</label>
-                    <input type="text" class="form-control" [(ngModel)]="stateToAdd.name"/>
-                </div>
-                <div class="form-group">
-                    <label>Kwota</label>
-                    <input type="text" class="form-control" [(ngModel)]="stateToAdd.value"/>
-                </div>
-                <button class="btn btn-primary" (click)="addState(stateToAdd)">OK</button>
+            <strong>Co mam</strong>
+            <div class="float-right"><strong>{{ flow.bigSum.toFixed(0) | number: '1.0-2' }} PLN</strong></div>
+            <hr />
+            <div class="row">
+                <div class="col-8"><strong>Nazwa</strong></div>
+                <div class="col-3"><strong>Wartość</strong></div>
+                <div class="col-1"><strong>%</strong></div>
             </div>
+            <hr />
+            <div *ngFor="let state of flow.states" (click)="state.isEditing = true" class="hoverable">
+                <div class="row">
+                    <div class="col-8">{{ state.name }}</div>
+                    <div class="col-3">{{ state.value | number: '1.0-2' }}&nbsp;{{ state.currency }}&nbsp;</div>
+                    <div class="col-1 float-right">{{ state.interest }}</div>
+                </div>
+                <app-edit-state [state]="state" [isVisible]="state.isEditing" (save)="addOrUpdateState(state)"
+                    (delete)="onDeleteState(state)">
+                </app-edit-state>
+            </div>
+
+            <span *ngIf="!isAddingState" (click)="isAddingState = true" class="hoverable blue">&plus; Dodaj</span>
+            <app-edit-state [state]="stateToAdd" [isVisible]="isAddingState" (save)="addOrUpdateState(stateToAdd)"
+                (delete)="onDeleteState(stateToAdd)">
+            </app-edit-state>
         </div>
         <div class="col-4">
-            <strong>Przychody</strong>
-            <div *ngFor="let profit of flow.profits">{{ profit.value }}</div>
-            <span *ngIf="!isAddingProfit" (click)="isAddingProfit = true" class="hoverable">Dodaj</span>
+            <strong>PRZYCHODY</strong>
+            <div class="float-right"><strong>{{ sumP() | number: '1.0-2' }} PLN</strong></div>
+            <hr />
+            <div class="row">
+                <div class="col-8"><strong>Nazwa</strong></div>
+                <div class="col-3"><strong>Wartość</strong></div>
+            </div>
+            <hr />
+            <div *ngFor="let profit of flow.profits" (click)="onProfitClicked(profit)" class="hoverable">
+                <div class="row">
+                    <div class="col-8">{{ profit.name }}</div>
+                    <div class="col-3">{{ profit.value | number: '1.0-2' }}&nbsp;{{ profit.currency }}&nbsp;</div>
+                </div>
+                <app-edit-profit [profit]="profit" [isVisible]="profit.isEditing" (save)="addOrUpdateProfit(profit)"
+                    (delete)="onDeleteProfit(profit)">
+                </app-edit-profit>
+            </div>
+            <div *ngIf="!isAddingProfit" (click)="isAddingProfit = true" class="hoverable blue">&plus; Dodaj</div>
+            <app-edit-profit [profit]="profitToAdd" [isVisible]="isAddingProfit" (save)="addOrUpdateProfit(profitToAdd)"
+                (delete)="onDeleteProfit(profitToAdd)"></app-edit-profit>
         </div>
         <div class="col-4">
-            <strong>Wydatki</strong>
-            <div *ngFor="let expense of flow.expenses">{{ expense.value }}</div>
-            <span *ngIf="!isAddingExpense" (click)="isAddingExpense = true" class="hoverable">Dodaj</span>
+            <strong>WYDATKI</strong>
+            <div class="float-right"><strong>{{ sumE() | number: '1.0-2' }} PLN</strong></div>
+            <hr />
+            <div class="row">
+                <div class="col-6"><strong>Nazwa</strong></div>
+                <div class="col-3"><strong>Wartość</strong></div>
+            </div>
+            <hr />
+            <div *ngFor="let expense of flow.expenses" (click)="expense.isEditing = true" class="hoverable">
+                <div class="row">
+                    <div class="col-8">{{ expense.name }}</div>
+                    <div class="col-3">{{ expense.value | number: '1.0-2' }}&nbsp;{{ expense.currency }}&nbsp;</div>
+                </div>
+                <app-edit-expense [expense]="expense" [isVisible]="expense.isEditing"
+                    (save)="addOrUpdateExpense(expense)" (delete)="onDeleteExpense(expense)">
+                </app-edit-expense>
+            </div>
+            <div *ngIf="!isAddingExpense" (click)="isAddingExpense = true" class="hoverable blue">&plus; Dodaj</div>
+            <app-edit-expense [expense]="expenseToAdd" [isVisible]="isAddingExpense"
+                (save)="addOrUpdateExpense(expenseToAdd)" (delete)="onDeleteExpense(expenseToAdd)"></app-edit-expense>
         </div>
     </div>
 </div>
