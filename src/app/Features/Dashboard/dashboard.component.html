@@ -1,8 +1,16 @@
 <div class="container wide">
     <h1>Dashboard</h1>
 
-    <span>USD: {{ forex?.usd.toFixed(3) }} PLN, EUR: {{ forex?.eur.toFixed(3) }} PLN, GOLD: {{ forex?.gold.toFixed(0) }}
-        PLN</span>
+    <div class="d-flex">
+        <span>USD: {{ forex?.usd.toFixed(3) }} PLN, EUR: {{ forex?.eur.toFixed(3) }} PLN, GOLD: {{
+            forex?.gold.toFixed(0) }}
+            PLN</span>
+        <span class="fill-remaining-space">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <label class="switch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PLN
+            <input type="checkbox" (click)="isPLN = !isPLN" />
+            <span class="slider round"></span>
+        </label>
+    </div>
 
     <div class="diagram">
         <div class="">
@@ -11,8 +19,8 @@
                 &sum;S<sub>i</sub> + m * ( &sum;P<sub>i</sub> - &sum;W<sub>i</sub> )
             </strong>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <strong>Bilans miesięczny: <span [ngClass]="getBalanceColor()">{{ getBalance() | number: '1.0-2'
-                    }}</span></strong>
+            <strong>Bilans miesięczny: <span [ngClass]="getBalanceColor()">{{ getBalance() | number: '3.0-0'
+                    }}</span>&nbsp;PLN</strong>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBancruptcy() }}</strong>
         </div>
@@ -22,20 +30,24 @@
     </div>
 
     <div class="row">
-        <div class="col-4">
+
+        <!-- STAN POSIADANIA -->
+
+        <div class="col-5">
             <strong>Co mam</strong>
-            <div class="float-right"><strong>{{ flow.bigSum.toFixed(0) | number: '1.0-2' }} PLN</strong></div>
-            <hr />
+            <div class="float-right"><strong>{{ flow.bigSum.toFixed(0) | number: '3.0-0' }} PLN</strong></div>
+            <hr class="RGF-hr" />
             <div class="row">
                 <div class="col-8"><strong>Nazwa</strong></div>
                 <div class="col-3"><strong>Wartość</strong></div>
                 <div class="col-1"><strong>%</strong></div>
             </div>
-            <hr />
+            <hr class="RGF-hr" />
             <div *ngFor="let state of flow.states" (click)="state.isEditing = true" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ state.name }}</div>
-                    <div class="col-3">{{ state.value | number: '1.0-2' }}&nbsp;{{ state.currency }}&nbsp;</div>
+                    <div class="col-3">{{ getValue(state) | number: '3.0-0' }}&nbsp;{{ isPLN ? 'PLN' : state.currency
+                        }}&nbsp;</div>
                     <div class="col-1 float-right">{{ state.interest }}</div>
                 </div>
                 <app-edit-state [state]="state" [isVisible]="state.isEditing" (save)="addOrUpdateState(state)"
@@ -48,41 +60,57 @@
                 (delete)="onDeleteState(stateToAdd)">
             </app-edit-state>
         </div>
-        <div class="col-4">
+
+        <!-- PRZYCHODY -->
+
+        <div class="col-5">
             <strong>PRZYCHODY</strong>
-            <div class="float-right"><strong>{{ sumP() | number: '1.0-2' }} PLN</strong></div>
-            <hr />
+            <div class="float-right"><strong>{{ sumP() | number: '3.0-0' }} PLN</strong></div>
+            <hr class="RGF-hr" />
             <div class="row">
                 <div class="col-8"><strong>Nazwa</strong></div>
                 <div class="col-3"><strong>Wartość</strong></div>
             </div>
-            <hr />
+            <hr class="RGF-hr" />
             <div *ngFor="let profit of flow.profits" (click)="onProfitClicked(profit)" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ profit.name }}</div>
-                    <div class="col-3">{{ profit.value | number: '1.0-2' }}&nbsp;{{ profit.currency }}&nbsp;</div>
+                    <div class="col-3">{{ getValue(profit) | number: '3.0-0' }}&nbsp;{{ isPLN ? 'PLN' :profit.currency
+                        }}&nbsp;</div>
                 </div>
                 <app-edit-profit [profit]="profit" [isVisible]="profit.isEditing" (save)="addOrUpdateProfit(profit)"
                     (delete)="onDeleteProfit(profit)">
                 </app-edit-profit>
             </div>
-            <div *ngIf="!isAddingProfit" (click)="isAddingProfit = true" class="hoverable blue">&plus; Dodaj</div>
+
             <app-edit-profit [profit]="profitToAdd" [isVisible]="isAddingProfit" (save)="addOrUpdateProfit(profitToAdd)"
                 (delete)="onDeleteProfit(profitToAdd)"></app-edit-profit>
+
+            <hr class="RGF-hr" />
+            <div class="row">
+                <div class="col-8">Inwestycje %% razem:</div>
+                <div class="col-3">{{ sumInvestments() | number: '3.0-0' }}&nbsp;PLN</div>
+            </div>
+
+            <div *ngIf="!isAddingProfit" (click)="isAddingProfit = true" class="hoverable blue">&plus; Dodaj</div>
         </div>
-        <div class="col-4">
+
+        <!-- WYDATKI -->
+
+        <div class="col-2">
             <strong>WYDATKI</strong>
-            <div class="float-right"><strong>{{ sumE() | number: '1.0-2' }} PLN</strong></div>
-            <hr />
+            <div class="float-right"><strong>{{ sumE() | number: '3.0-0' }} PLN</strong></div>
+            <hr class="RGF-hr" />
             <div class="row">
                 <div class="col-6"><strong>Nazwa</strong></div>
                 <div class="col-3"><strong>Wartość</strong></div>
             </div>
-            <hr />
+            <hr class="RGF-hr" />
             <div *ngFor="let expense of flow.expenses" (click)="expense.isEditing = true" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ expense.name }}</div>
-                    <div class="col-3">{{ expense.value | number: '1.0-2' }}&nbsp;{{ expense.currency }}&nbsp;</div>
+                    <div class="col-3">{{ getValue(expense) | number: '3.0-0' }}&nbsp;{{ isPLN ? 'PLN' :expense.currency
+                        }}&nbsp;</div>
                 </div>
                 <app-edit-expense [expense]="expense" [isVisible]="expense.isEditing"
                     (save)="addOrUpdateExpense(expense)" (delete)="onDeleteExpense(expense)">

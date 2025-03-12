@@ -13,6 +13,7 @@ export default class Utils {
       name: '',
       tags: '',
       value: 0,
+      valuePLN: 0,
       isEditing: false,
     };
   }
@@ -24,6 +25,7 @@ export default class Utils {
       name: '',
       tags: '',
       value: 0,
+      valuePLN: 0,
       rate: Rate.Monthly,
       isEditing: false,
       isInterestProfit: false,
@@ -37,6 +39,7 @@ export default class Utils {
       name: '',
       tags: '',
       value: 0,
+      valuePLN: 0,
       rate: Rate.Monthly,
       isEditing: false,
     };

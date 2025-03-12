@@ -7,11 +7,12 @@ import { Profit } from '../../models/profit';
 import { State } from '../../models/state';
 import Utils from '../../utils/utils';
 import { DashboardService } from './dashboard.service';
+import { ValueObject } from '../../models/valueObject';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: [],
+  styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
   graph: any = {
@@ -37,11 +38,11 @@ export class DashboardComponent implements OnInit {
   isEditingState = false;
 
   sumS = () =>
-    this.flow.states.reduce((sum, current) => sum + current.value, 0);
+    this.flow.states.reduce((sum, current) => sum + current.valuePLN, 0);
   sumP = () =>
-    this.flow.profits.reduce((sum, current) => sum + current.value, 0);
+    this.flow.profits.reduce((sum, current) => sum + current.valuePLN, 0);
   sumE = () =>
-    this.flow.expenses.reduce((sum, current) => sum + current.value, 0);
+    this.flow.expenses.reduce((sum, current) => sum + current.valuePLN, 0);
 
   // sumP: number = 1;
   // sumE: number = 1;
@@ -51,6 +52,7 @@ export class DashboardComponent implements OnInit {
   expenseToAdd: Expense = Utils.getClearExpense();
 
   forex: Forex;
+  isPLN = false;
 
   constructor(private flowService: DashboardService) {}
 
@@ -63,8 +65,19 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  sumInvestments() {
+    return this.flow.profits
+      .filter((p) => p.isInterestProfit)
+      .reduce((sum, current) => sum + current.valuePLN, 0);
+  }
+
   onProfitClicked(profit: Profit) {
     if (!profit.isInterestProfit) profit.isEditing = true;
+  }
+
+  getValue(valueObject: ValueObject) {
+    const value = this.isPLN ? valueObject.valuePLN : valueObject.value;
+    return value;
   }
 
   getFlow() {
