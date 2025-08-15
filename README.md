@@ -7,8 +7,10 @@ This is my financial dashboard. You can provide your:
 3. Expenses - what you spend monthly $-$ $e_k$
 
 Then by running an equation:
+
 $$f(m, a, p, e) = \sum a_i + m \times \big(\sum p_j - \sum e_k\big)$$
-you can see where will you be in $m$ months.
+
+you can see your monthly balance and where will you be in $m$ months.
 
 There is a simple diagram showing the next 24 months.
 
