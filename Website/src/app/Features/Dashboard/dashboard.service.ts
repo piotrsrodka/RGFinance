@@ -12,10 +12,11 @@ import { Forex } from '../../models/forex';
   providedIn: 'root',
 })
 export class DashboardService {
-  
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
 
-  flowUrl = environment.apiUrl + '/flow/';
+  environment = environment;
+
+  flowUrl = this.environment.apiUrl + '/flow/';
 
   Get(id: number): Observable<Flow> {
     return this.httpClient.get<Flow>(this.flowUrl + id);
@@ -48,5 +49,4 @@ export class DashboardService {
   DeleteExpense(expense: Expense) {
     return this.httpClient.delete(this.flowUrl + 'expense/' + expense.id);
   }
-
 }
