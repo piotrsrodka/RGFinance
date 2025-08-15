@@ -33,10 +33,10 @@ namespace RGFinance.Controllers
         }
 
 
-        [HttpPost("state")]
-        public async Task<ActionResult> AddOrUpdate(State state)
+        [HttpPost("asset")]
+        public async Task<ActionResult> AddOrUpdate(Asset asset)
         {
-            await this.flowService.AddOrUpdateState(state);
+            await this.flowService.AddOrUpdateAsset(asset);
             return Ok();
         }
 
@@ -47,10 +47,10 @@ namespace RGFinance.Controllers
             return Ok();
         }
 
-        [HttpDelete("state/{id}")]
-        public async Task<ActionResult> DeleteState(int id)
+        [HttpDelete("asset/{id}")]
+        public async Task<ActionResult> DeleteAsset(int id)
         {
-            await this.flowService.DeleteState(id);
+            await this.flowService.DeleteAsset(id);
             return Ok();
         }
 

@@ -1,4 +1,4 @@
-﻿using Database;
+using Database;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Xml;
@@ -19,7 +19,7 @@ namespace RGFinance.FlowFeature
         {
             Forex? forex = await this.GetForex();
 
-            List<State> states = await this.context.States
+            List<Asset> assets = await this.context.States
                 // .OrderByDescending(p => p.Value)
                 .ToListAsync();
 
@@ -30,17 +30,17 @@ namespace RGFinance.FlowFeature
             // profits from states that have interest rates
             List<Profit> interestProfits = new List<Profit>();
 
-            foreach (var state in states)
+            foreach (var asset in assets)
             {
-                if (state.Interest > 0)
+                if (asset.Interest > 0)
                 {
-                    var grossValue = state.Value * state.Interest / 1200.0m;
+                    var grossValue = asset.Value * asset.Interest / 1200.0m;
 
                     var interestProfit = new Profit
                     {
-                        Currency = state.Currency,
+                        Currency = asset.Currency,
                         Id = -1,
-                        Name = state.Name + " %%",
+                        Name = asset.Name + " %%",
                         Rate = Rate.Monthly,
                         Value = Math.Round(grossValue - (0.19m * grossValue), 2), // deduce tax from interests
                         IsInterestProfit = true,
@@ -78,23 +78,23 @@ namespace RGFinance.FlowFeature
                 }
             }
 
-            foreach (var state in states)
+            foreach (var asset in assets)
             {
-                if (state.Currency.ToUpper() == "PLN")
+                if (asset.Currency.ToUpper() == "PLN")
                 {
-                    state.ValuePLN = state.Value;
+                    asset.ValuePLN = asset.Value;
                 }
-                if (state.Currency.ToUpper() == "EUR")
+                if (asset.Currency.ToUpper() == "EUR")
                 {
-                    state.ValuePLN = state.Value * forex.Eur;
+                    asset.ValuePLN = asset.Value * forex.Eur;
                 }
-                else if (state.Currency.ToUpper() == "USD")
+                else if (asset.Currency.ToUpper() == "USD")
                 {
-                    state.ValuePLN = state.Value * forex.Usd;
+                    asset.ValuePLN = asset.Value * forex.Usd;
                 }
-                else if (state.Currency.ToUpper() == "GOZ")
+                else if (asset.Currency.ToUpper() == "GOZ")
                 {
-                    state.ValuePLN = state.Value * forex.Gold;
+                    asset.ValuePLN = asset.Value * forex.Gold;
                 }
             }
 
@@ -122,10 +122,10 @@ namespace RGFinance.FlowFeature
 
             decimal bigSum = 0;
 
-            decimal plns = states.Where(s => s.Currency.ToUpper() == "PLN").Sum(s => s.Value);
-            decimal eurs = states.Where(s => s.Currency.ToUpper() == "EUR").Sum(s => s.Value * forex.Eur);
-            decimal usds = states.Where(s => s.Currency.ToUpper() == "USD").Sum(s => s.Value * forex.Usd);
-            decimal goldie = states.Where(s => s.Currency.ToUpper() == "GOZ").Sum(s => s.Value * forex.Gold);
+            decimal plns = assets.Where(s => s.Currency.ToUpper() == "PLN").Sum(s => s.Value);
+            decimal eurs = assets.Where(s => s.Currency.ToUpper() == "EUR").Sum(s => s.Value * forex.Eur);
+            decimal usds = assets.Where(s => s.Currency.ToUpper() == "USD").Sum(s => s.Value * forex.Usd);
+            decimal goldie = assets.Where(s => s.Currency.ToUpper() == "GOZ").Sum(s => s.Value * forex.Gold);
 
             bigSum = plns + eurs + usds + goldie;
 
@@ -133,14 +133,14 @@ namespace RGFinance.FlowFeature
             {
                 BigSum = bigSum,
                 Expenses = expenses.OrderByDescending(e => e.ValuePLN).ToList(),
-                States = states.OrderByDescending(s => s.ValuePLN).ToList(),
+                Assets = assets.OrderByDescending(s => s.ValuePLN).ToList(),
                 Profits = profits.OrderByDescending(p => p.ValuePLN).ToList(),
             };
         }
 
-        public async Task<int> AddOrUpdateState(State state)
+        public async Task<int> AddOrUpdateAsset(Asset asset)
         {
-            this.context.States.Update(state);
+            this.context.States.Update(asset);
             return await this.context.SaveChangesAsync();
         }
 
@@ -220,10 +220,10 @@ namespace RGFinance.FlowFeature
             await this.context.SaveChangesAsync();
         }
 
-        public async Task DeleteState(int id)
+        public async Task DeleteAsset(int id)
         {
-            var state = await this.context.States.FirstOrDefaultAsync(p => p.Id == id);
-            this.context.States.Remove(state);
+            var asset = await this.context.States.FirstOrDefaultAsync(p => p.Id == id);
+            this.context.States.Remove(asset);
             await this.context.SaveChangesAsync();
         }
 

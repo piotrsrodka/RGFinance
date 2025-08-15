@@ -1,26 +1,32 @@
 # RGFinance
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.13.
+This is my financial dashboard. You can provide your:
+
+1. Assets - what you own $-$ $a_i$
+2. Profits - what you earn monthly $-$ $p_j$
+3. Expenses - what you spend monthly $-$ $e_k$
+
+Then by running an equation:
+$$f(m, a, p, e) = \sum a_i + m \times \big(\sum p_j - \sum e_k\big)$$
+you can see where will you be in $m$ months.
+
+There is a simple diagram showing the next 24 months.
+
+## Stack
+
+Angular 13
+
+Dotnet 6
+
+MS SQL
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4300/`. The app will automatically reload if you change any of the source files.
 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
 ## Further help
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Database.Entities;
 
 namespace Database
@@ -15,14 +15,14 @@ namespace Database
         public DbSet<Session> Sessions { get; set; } = null!;
         
         /* Flows */
-        public DbSet<State> States { get; set; } = null!;        
+        public DbSet<Asset> States { get; set; } = null!;        
         public DbSet<Profit> Profits { get; set; } = null!;
         public DbSet<Expense> Expenses { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder
-                .Entity<State>()
+                .Entity<Asset>()
                 .Property(c => c.InterestRate)
                 .HasConversion(
                     s => s.ToString(),
