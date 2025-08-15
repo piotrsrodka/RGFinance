@@ -1,17 +1,56 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# .NET
+WebApi/RGFinance/bin/
+WebApi/RGFinance/obj/
+WebApi/Database/bin/
+WebApi/Database/obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+[Bb]in/
+[Oo]bj/
 
-# compiled output
-/dist
-/tmp
-/out-tsc
-# Only exists if Bazel was run
-/bazel-out
+# Angular
+Website/node_modules/
+Website/dist/
+Website/.angular/
+Website/.sass-cache/
+Website/coverage/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# dependencies
-/node_modules
+# Environment and Configuration Files
+appsettings.Development.json
+appsettings.local.json
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
 
-# profiling files
-chrome-profiler-events*.json
+# Database Files
+*.bacpac
+*.bak
+*.mdf
+*.ldf
+
+# Visual Studio
+.vs/
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
 
 # IDEs and editors
 /.idea
@@ -30,16 +69,8 @@ chrome-profiler-events*.json
 !.vscode/extensions.json
 .history/*
 
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
-.DS_Store
+# Temporary Files
+*.tmp
+*.temp
 Thumbs.db
+.DS_Store

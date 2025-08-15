@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RGFinance", "RGFinance\RGFinance.csproj", "{FCC16559-9B29-449B-998C-6E39E7C6E816}"
+	ProjectSection(ProjectDependencies) = postProject
+		{08106D67-E997-4CE2-9F76-EB4DD7873E8D} = {08106D67-E997-4CE2-9F76-EB4DD7873E8D}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Database\Database.csproj", "{08106D67-E997-4CE2-9F76-EB4DD7873E8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FCC16559-9B29-449B-998C-6E39E7C6E816}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCC16559-9B29-449B-998C-6E39E7C6E816}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCC16559-9B29-449B-998C-6E39E7C6E816}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCC16559-9B29-449B-998C-6E39E7C6E816}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08106D67-E997-4CE2-9F76-EB4DD7873E8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08106D67-E997-4CE2-9F76-EB4DD7873E8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08106D67-E997-4CE2-9F76-EB4DD7873E8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08106D67-E997-4CE2-9F76-EB4DD7873E8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BC39F9A4-F2EB-4388-AAAB-B2FC0FEA3B96}
+	EndGlobalSection
+EndGlobal
