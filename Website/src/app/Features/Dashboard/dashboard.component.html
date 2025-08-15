@@ -16,7 +16,7 @@
 
         <!-- STAN POSIADANIA -->
 
-        <div class="col-5">
+        <div class="col-4">
             <strong>Co mam</strong>
             <div class="float-right"><strong>{{ flow.bigSum.toFixed(0) | number: '3.0-0' }} PLN</strong></div>
             <hr class="RGF-hr" />
@@ -29,7 +29,9 @@
             <div *ngFor="let asset of flow.assets" (click)="asset.isEditing = true" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ asset.name }}</div>
-                    <div class="col-3">{{ getValue(asset) | number: '3.0-0' }}&nbsp;{{ isPLN ? 'PLN' : asset.currency
+                    <div class="col-3 d-flex justify-content-end">{{ getValue(asset) | number: '3.0-0' }}&nbsp;{{ isPLN
+                        ? 'PLN'
+                        : asset.currency
                         }}&nbsp;</div>
                     <div class="col-1 float-right">{{ asset.interest }}</div>
                 </div>
@@ -46,7 +48,7 @@
 
         <!-- PRZYCHODY -->
 
-        <div class="col-5">
+        <div class="col-4">
             <strong>PRZYCHODY</strong>
             <div class="float-right"><strong>{{ sumP() | number: '3.0-0' }} PLN</strong></div>
             <hr class="RGF-hr" />
@@ -58,7 +60,8 @@
             <div *ngFor="let profit of flow.profits" (click)="onProfitClicked(profit)" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ profit.name }}</div>
-                    <div class="col-3">{{ getValue(profit) | number: '3.0-0' }}&nbsp;{{ isPLN ? 'PLN' :profit.currency
+                    <div class="col-3 d-flex justify-content-end">{{ getValue(profit) | number: '3.0-0' }}&nbsp;{{ isPLN
+                        ? 'PLN' :profit.currency
                         }}&nbsp;</div>
                 </div>
                 <app-edit-profit [profit]="profit" [isVisible]="profit.isEditing" (save)="addOrUpdateProfit(profit)"
@@ -80,7 +83,7 @@
 
         <!-- WYDATKI -->
 
-        <div class="col-2">
+        <div class="col-3">
             <strong>WYDATKI</strong>
             <div class="float-right"><strong>{{ sumE() | number: '3.0-0' }} PLN</strong></div>
             <hr class="RGF-hr" />
@@ -92,7 +95,8 @@
             <div *ngFor="let expense of flow.expenses" (click)="expense.isEditing = true" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ expense.name }}</div>
-                    <div class="col-3">{{ getValue(expense) | number: '3.0-0' }}&nbsp;{{ isPLN ? 'PLN' :expense.currency
+                    <div class="col-3 d-flex justify-content-end">{{ getValue(expense) | number: '3.0-0' }}&nbsp;{{
+                        isPLN ? 'PLN' :expense.currency
                         }}&nbsp;</div>
                 </div>
                 <app-edit-expense [expense]="expense" [isVisible]="expense.isEditing"
