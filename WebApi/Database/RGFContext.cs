@@ -15,7 +15,7 @@ namespace Database
         public DbSet<Session> Sessions { get; set; } = null!;
         
         /* Flows */
-        public DbSet<Asset> States { get; set; } = null!;        
+        public DbSet<Asset> Assets { get; set; } = null!;        
         public DbSet<Profit> Profits { get; set; } = null!;
         public DbSet<Expense> Expenses { get; set; } = null!;
 

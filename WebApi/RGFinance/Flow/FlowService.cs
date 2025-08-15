@@ -19,15 +19,13 @@ namespace RGFinance.FlowFeature
         {
             Forex? forex = await this.GetForex();
 
-            List<Asset> assets = await this.context.States
-                // .OrderByDescending(p => p.Value)
+            List<Asset> assets = await this.context.Assets
                 .ToListAsync();
 
             List<Profit> profits = await this.context.Profits
-                // .OrderByDescending(p => p.Value)
                 .ToListAsync();
 
-            // profits from states that have interest rates
+            // profits from assets that have interest rates
             List<Profit> interestProfits = new List<Profit>();
 
             foreach (var asset in assets)
@@ -54,9 +52,7 @@ namespace RGFinance.FlowFeature
 
             var expenses = await this.context.Expenses
                 .OrderByDescending(p => p.Value)
-                .ToListAsync();
-
-            
+                .ToListAsync();            
 
             foreach (var profit in profits)
             {
@@ -140,7 +136,7 @@ namespace RGFinance.FlowFeature
 
         public async Task<int> AddOrUpdateAsset(Asset asset)
         {
-            this.context.States.Update(asset);
+            this.context.Assets.Update(asset);
             return await this.context.SaveChangesAsync();
         }
 
@@ -222,8 +218,8 @@ namespace RGFinance.FlowFeature
 
         public async Task DeleteAsset(int id)
         {
-            var asset = await this.context.States.FirstOrDefaultAsync(p => p.Id == id);
-            this.context.States.Remove(asset);
+            var asset = await this.context.Assets.FirstOrDefaultAsync(p => p.Id == id);
+            this.context.Assets.Remove(asset);
             await this.context.SaveChangesAsync();
         }
 
