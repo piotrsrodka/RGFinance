@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // import * as PlotlyJS from 'plotly.min.js';
-import { PlotlyViaWindowModule  } from 'angular-plotly.js';
+import { PlotlyViaWindowModule } from 'angular-plotly.js';
 
 // PlotlyModule.plotlyjs = PlotlyJS;
 
@@ -13,7 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './Features/Dashboard/dashboard.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { EditStateComponent } from '../app/Features/Dashboard/editState/edit-state.component';
+import { EditAssetComponent } from './Features/Dashboard/editAsset/edit-asset.component';
 import { EditExpenseComponent } from './Features/Dashboard/editExpense/edit-expense.component';
 import { EditProfitComponent } from './Features/Dashboard/editProfit/edit-profit.component';
 
@@ -21,7 +21,7 @@ import { EditProfitComponent } from './Features/Dashboard/editProfit/edit-profit
   declarations: [
     AppComponent,
     DashboardComponent,
-    EditStateComponent,
+    EditAssetComponent,
     EditExpenseComponent,
     EditProfitComponent,
   ],
@@ -35,9 +35,7 @@ import { EditProfitComponent } from './Features/Dashboard/editProfit/edit-profit
     NgbModule,
     PlotlyViaWindowModule,
   ],
-  providers: [
-    
-  ],
-  bootstrap: [AppComponent]
+  providers: [],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

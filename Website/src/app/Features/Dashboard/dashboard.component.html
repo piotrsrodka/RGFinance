@@ -26,22 +26,22 @@
                 <div class="col-1"><strong>%</strong></div>
             </div>
             <hr class="RGF-hr" />
-            <div *ngFor="let state of flow.states" (click)="state.isEditing = true" class="hoverable">
+            <div *ngFor="let asset of flow.assets" (click)="asset.isEditing = true" class="hoverable">
                 <div class="row">
-                    <div class="col-8">{{ state.name }}</div>
-                    <div class="col-3">{{ getValue(state) | number: '3.0-0' }}&nbsp;{{ isPLN ? 'PLN' : state.currency
+                    <div class="col-8">{{ asset.name }}</div>
+                    <div class="col-3">{{ getValue(asset) | number: '3.0-0' }}&nbsp;{{ isPLN ? 'PLN' : asset.currency
                         }}&nbsp;</div>
-                    <div class="col-1 float-right">{{ state.interest }}</div>
+                    <div class="col-1 float-right">{{ asset.interest }}</div>
                 </div>
-                <app-edit-state [state]="state" [isVisible]="state.isEditing" (save)="addOrUpdateState(state)"
-                    (delete)="onDeleteState(state)">
-                </app-edit-state>
+                <app-edit-asset [asset]="asset" [isVisible]="asset.isEditing" (save)="addOrUpdateAsset(asset)"
+                    (delete)="onDeleteAsset(asset)">
+                </app-edit-asset>
             </div>
 
-            <span *ngIf="!isAddingState" (click)="isAddingState = true" class="hoverable blue">&plus; Dodaj</span>
-            <app-edit-state [state]="stateToAdd" [isVisible]="isAddingState" (save)="addOrUpdateState(stateToAdd)"
-                (delete)="onDeleteState(stateToAdd)">
-            </app-edit-state>
+            <span *ngIf="!isAddingAsset" (click)="isAddingAsset = true" class="hoverable blue">&plus; Dodaj</span>
+            <app-edit-asset [asset]="assetToAdd" [isVisible]="isAddingAsset" (save)="addOrUpdateAsset(assetToAdd)"
+                (delete)="onDeleteAsset(assetToAdd)">
+            </app-edit-asset>
         </div>
 
         <!-- PRZYCHODY -->

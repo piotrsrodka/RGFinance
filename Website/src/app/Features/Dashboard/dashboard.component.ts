@@ -4,7 +4,7 @@ import { Expense } from '../../models/expense';
 import { Flow } from '../../models/flow';
 import { Forex } from '../../models/forex';
 import { Profit } from '../../models/profit';
-import { State } from '../../models/state';
+import { Asset } from '../../models/asset';
 import Utils from '../../utils/utils';
 import { DashboardService } from './dashboard.service';
 import { ValueObject } from '../../models/valueObject';
@@ -28,17 +28,17 @@ export class DashboardComponent implements OnInit {
     bigSum: 0,
     expenses: [],
     profits: [],
-    states: [],
+    assets: [],
   };
 
-  isAddingState = false;
+  isAddingAsset = false;
   isAddingProfit = false;
   isAddingExpense = false;
 
-  isEditingState = false;
+  isEditingAsset = false;
 
   sumS = () =>
-    this.flow.states.reduce((sum, current) => sum + current.valuePLN, 0);
+    this.flow.assets.reduce((sum, current) => sum + current.valuePLN, 0);
   sumP = () =>
     this.flow.profits.reduce((sum, current) => sum + current.valuePLN, 0);
   sumE = () =>
@@ -47,7 +47,7 @@ export class DashboardComponent implements OnInit {
   // sumP: number = 1;
   // sumE: number = 1;
 
-  stateToAdd = Utils.getClearState();
+  assetToAdd = Utils.getClearAsset();
   profitToAdd: Profit = Utils.getClearProfit();
   expenseToAdd: Expense = Utils.getClearExpense();
 
@@ -116,18 +116,18 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  addOrUpdateState(state: State) {
-    if (this.isAddingState) {
-      this.flow.states.push(state);
+  addOrUpdateAsset(asset: Asset) {
+    if (this.isAddingAsset) {
+      this.flow.assets.push(asset);
     }
 
-    this.flowService.AddOrUpdateState(state).subscribe(() => {
+    this.flowService.AddOrUpdateAsset(asset).subscribe(() => {
       this.getFlow();
     });
 
-    this.isAddingState = false;
-    state.isEditing = false;
-    this.stateToAdd = Utils.getClearState();
+    this.isAddingAsset = false;
+    asset.isEditing = false;
+    this.assetToAdd = Utils.getClearAsset();
   }
 
   addOrUpdateProfit(profit: Profit) {
@@ -144,14 +144,14 @@ export class DashboardComponent implements OnInit {
     this.profitToAdd = Utils.getClearProfit();
   }
 
-  onDeleteState(state: State) {
-    if (state.id === 0) {
-      this.isAddingState = false;
-      this.stateToAdd = Utils.getClearState();
+  onDeleteAsset(asset: Asset) {
+    if (asset.id === 0) {
+      this.isAddingAsset = false;
+      this.assetToAdd = Utils.getClearAsset();
       return;
     }
 
-    this.flowService.DeleteState(state).subscribe(() => {
+    this.flowService.DeleteAsset(asset).subscribe(() => {
       this.getFlow();
     });
   }

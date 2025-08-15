@@ -1,10 +1,10 @@
 import { Expense } from '../models/expense';
 import { Profit } from '../models/profit';
 import { Rate } from '../models/rate';
-import { State } from '../models/state';
+import { Asset } from '../models/asset';
 
 export default class Utils {
-  public static getClearState(): State {
+  public static getClearAsset(): Asset {
     return {
       id: 0,
       currency: 'PLN',

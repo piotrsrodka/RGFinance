@@ -1,10 +1,10 @@
-import { Expense } from "./expense";
-import { Profit } from "./profit";
-import { State } from "./state";
+import { Expense } from './expense';
+import { Profit } from './profit';
+import { Asset } from './asset';
 
 export interface Flow {
-    bigSum: number;
-    states: State[],
-    profits: Profit[],
-    expenses: Expense[],
+  bigSum: number;
+  assets: Asset[];
+  profits: Profit[];
+  expenses: Expense[];
 }
