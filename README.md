@@ -15,7 +15,7 @@ you can see your monthly balance and where will you be in $m$ months.
 There is a simple diagram showing the next 24 months.
 
 Assets, Profits and Expenses can be provided in PLN, EUR, USD or GOZ (ounce of gold).
-They all can be recalculated to PLN by taking current Forex ratios.
+They all can be recalculated to PLN, EUR or USD by taking current (on-line) Forex ratios.
 
 Assets have Yearly Interest Rate associated with them, so you can automatically see your interest profits each month. It does not take into account accumulation (yet).
 

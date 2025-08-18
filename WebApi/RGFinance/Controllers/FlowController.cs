@@ -10,11 +10,14 @@ namespace RGFinance.Controllers
     {
         private readonly ILogger<FlowController> _logger;
         private readonly IFlowService flowService;
+        private readonly IForexService forexService;
 
-        public FlowController(ILogger<FlowController> logger, IFlowService flowService)
+        public FlowController(ILogger<FlowController> logger, IFlowService flowService,
+            IForexService forexService)
         {
             _logger = logger;
             this.flowService = flowService;
+            this.forexService = forexService;
         }
 
         [HttpGet("{id}")]
@@ -28,7 +31,7 @@ namespace RGFinance.Controllers
         [HttpGet("forex")]
         public async Task<Forex> GetForex()
         {
-            return await this.flowService.GetForex();
+            return await this.forexService.GetForex();
         }
 
         [HttpPost("asset")]

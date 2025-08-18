@@ -1,4 +1,4 @@
-﻿namespace RGFinance.Flow
+namespace RGFinance.FlowFeature
 {
     public static class Currency
     {

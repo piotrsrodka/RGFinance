@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<RGFContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("RGF")).EnableSensitiveDataLogging());
 
 builder.Services.AddTransient<IFlowService, FlowService>();
+builder.Services.AddTransient<IForexService, ForexService>();
 
 builder.Services.AddControllers();
 
