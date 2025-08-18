@@ -22,18 +22,14 @@ Assets have Yearly Interest Rate associated with them, so you can automatically 
 ## Stack
 
 Angular 13
-
 Dotnet 6
-
 MS SQL
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4300/`. The app will automatically reload if you change any of the source files.
-
+Angular run `ng serve` for a dev server. Navigate to `http://localhost:4300/`.
 For backend `dotnet run` in Api Project directory
-
-Remember to update-database!
+Remember to update-database via dotnet-ef tools
 
 ## Build
 

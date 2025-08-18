@@ -7,7 +7,7 @@ namespace RGFinance.Controllers
     [ApiController]
     [Route("[controller]")]
     public class FlowController : ControllerBase
-    {       
+    {
         private readonly ILogger<FlowController> _logger;
         private readonly IFlowService flowService;
 
@@ -25,16 +25,14 @@ namespace RGFinance.Controllers
         }
 
         //https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml
-
         [HttpGet("forex")]
         public async Task<Forex> GetForex()
         {
             return await this.flowService.GetForex();
         }
 
-
         [HttpPost("asset")]
-        public async Task<ActionResult> AddOrUpdate(Asset asset)
+        public async Task<ActionResult> AddOrUpdateAsset(Asset asset)
         {
             await this.flowService.AddOrUpdateAsset(asset);
             return Ok();
@@ -44,6 +42,13 @@ namespace RGFinance.Controllers
         public async Task<ActionResult> AddOrUpdateProfit(Profit profit)
         {
             await this.flowService.AddOrUpdateProfit(profit);
+            return Ok();
+        }
+
+        [HttpPost("expense")]
+        public async Task<ActionResult> AddOrUpdateExpense(Expense expense)
+        {
+            await this.flowService.AddOrUpdateExpense(expense);
             return Ok();
         }
 
@@ -65,13 +70,6 @@ namespace RGFinance.Controllers
         public async Task<ActionResult> DeleteExpense(int id)
         {
             await this.flowService.DeleteExpense(id);
-            return Ok();
-        }
-
-        [HttpPost("expense")]
-        public async Task<ActionResult> AddOrUpdateExpense(Expense expense)
-        {
-            await this.flowService.AddOrUpdateExpense(expense);
             return Ok();
         }
     }

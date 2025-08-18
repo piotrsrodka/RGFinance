@@ -1,8 +1,8 @@
 using Database;
-using Database.Entities;
-using Microsoft.EntityFrameworkCore;
 using System.Xml;
 using System.Xml.Linq;
+using Database.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace RGFinance.FlowFeature
 {
@@ -25,94 +25,28 @@ namespace RGFinance.FlowFeature
             List<Profit> profits = await this.context.Profits
                 .ToListAsync();
 
-            // profits from assets that have interest rates
-            List<Profit> interestProfits = new List<Profit>();
+            List<Expense> expenses = await this.context.Expenses
+                .ToListAsync();
 
-            foreach (var asset in assets)
-            {
-                if (asset.Interest > 0)
-                {
-                    var grossValue = asset.Value * asset.Interest / 1200.0m;
+            // Profits for assets with interest
+            List<Profit> interestProfits = GetInterestProfits(assets);
 
-                    var interestProfit = new Profit
-                    {
-                        Currency = asset.Currency,
-                        Id = -1,
-                        Name = asset.Name + " %%",
-                        Rate = Rate.Monthly,
-                        Value = Math.Round(grossValue - (0.19m * grossValue), 2), // deduce tax from interests
-                        IsInterestProfit = true,
-                    };
-
-                    interestProfits.Add(interestProfit);
-                }
-            }
-
+            // Combine
             profits = profits.Concat(interestProfits).ToList();
-
-            var expenses = await this.context.Expenses
-                .OrderByDescending(p => p.Value)
-                .ToListAsync();            
 
             foreach (var profit in profits)
             {
-                if (profit.Currency.ToUpper() == "PLN")
-                {
-                    profit.ValuePLN = profit.Value;
-                }
-                if (profit.Currency.ToUpper() == "EUR")
-                {
-                    profit.ValuePLN = profit.Value * forex.Eur;
-                }
-                else if (profit.Currency.ToUpper() == "USD")
-                {
-                    profit.ValuePLN = profit.Value * forex.Usd;
-                }
-                else if (profit.Currency.ToUpper() == "GOZ")
-                {
-                    profit.ValuePLN = profit.Value * forex.Gold;
-                }
+                this.ExchangeFromPLN(profit, forex);
             }
 
             foreach (var asset in assets)
             {
-                if (asset.Currency.ToUpper() == "PLN")
-                {
-                    asset.ValuePLN = asset.Value;
-                }
-                if (asset.Currency.ToUpper() == "EUR")
-                {
-                    asset.ValuePLN = asset.Value * forex.Eur;
-                }
-                else if (asset.Currency.ToUpper() == "USD")
-                {
-                    asset.ValuePLN = asset.Value * forex.Usd;
-                }
-                else if (asset.Currency.ToUpper() == "GOZ")
-                {
-                    asset.ValuePLN = asset.Value * forex.Gold;
-                }
+                this.ExchangeFromPLN(asset, forex);
             }
-
 
             foreach (var expense in expenses)
             {
-                if (expense.Currency.ToUpper() == "PLN")
-                {
-                    expense.ValuePLN = expense.Value;
-                }
-                if (expense.Currency.ToUpper() == "EUR")
-                {
-                    expense.ValuePLN = expense.Value * forex.Eur;
-                }
-                else if (expense.Currency.ToUpper() == "USD")
-                {
-                    expense.ValuePLN = expense.Value * forex.Usd;
-                }
-                else if (expense.Currency.ToUpper() == "GOZ")
-                {
-                    expense.ValuePLN = expense.Value * forex.Gold;
-                }
+                this.ExchangeFromPLN(expense, forex);
             }
 
 
@@ -128,9 +62,9 @@ namespace RGFinance.FlowFeature
             return new Flow
             {
                 BigSum = bigSum,
-                Expenses = expenses.OrderByDescending(e => e.ValuePLN).ToList(),
-                Assets = assets.OrderByDescending(s => s.ValuePLN).ToList(),
-                Profits = profits.OrderByDescending(p => p.ValuePLN).ToList(),
+                Expenses = expenses.OrderByDescending(e => e.CurrentCurrencyValue).ToList(),
+                Assets = assets.OrderByDescending(s => s.CurrentCurrencyValue).ToList(),
+                Profits = profits.OrderByDescending(p => p.CurrentCurrencyValue).ToList(),
             };
         }
 
@@ -228,6 +162,53 @@ namespace RGFinance.FlowFeature
             var expense = await this.context.Expenses.FirstOrDefaultAsync(p => p.Id == id);
             this.context.Expenses.Remove(expense);
             await this.context.SaveChangesAsync();
+        }
+
+        private void ExchangeFromPLN(ValueObject valueObject, Forex forex)
+        {
+            if (valueObject.Currency.ToUpper() == "PLN")
+            {
+                valueObject.CurrentCurrencyValue = valueObject.Value;
+            }
+            else if (valueObject.Currency.ToUpper() == "EUR")
+            {
+                valueObject.CurrentCurrencyValue = valueObject.Value * forex.Eur;
+            }
+            else if (valueObject.Currency.ToUpper() == "USD")
+            {
+                valueObject.CurrentCurrencyValue = valueObject.Value * forex.Usd;
+            }
+            else if (valueObject.Currency.ToUpper() == "GOZ")
+            {
+                valueObject.CurrentCurrencyValue = valueObject.Value * forex.Gold;
+            }
+        }
+
+        private static List<Profit> GetInterestProfits(List<Asset> assets)
+        {
+            List<Profit> interestProfits = new List<Profit>();
+
+            foreach (Asset asset in assets)
+            {
+                if (asset.Interest > 0)
+                {
+                    var grossValue = asset.Value * asset.Interest / 1200.0m;
+
+                    var interestProfit = new Profit
+                    {
+                        Currency = asset.Currency,
+                        Id = -1,
+                        Name = asset.Name + " %%",
+                        Rate = Rate.Monthly,
+                        Value = Math.Round(grossValue - (0.19m * grossValue), 2),
+                        IsInterestProfit = true,
+                    };
+
+                    interestProfits.Add(interestProfit);
+                }
+            }
+
+            return interestProfits;
         }
     }
 }

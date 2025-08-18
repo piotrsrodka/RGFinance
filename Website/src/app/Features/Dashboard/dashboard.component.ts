@@ -38,11 +38,20 @@ export class DashboardComponent implements OnInit {
   isEditingAsset = false;
 
   sumS = () =>
-    this.flow.assets.reduce((sum, current) => sum + current.valuePLN, 0);
+    this.flow.assets.reduce(
+      (sum, current) => sum + current.currentCurrencyValue,
+      0
+    );
   sumP = () =>
-    this.flow.profits.reduce((sum, current) => sum + current.valuePLN, 0);
+    this.flow.profits.reduce(
+      (sum, current) => sum + current.currentCurrencyValue,
+      0
+    );
   sumE = () =>
-    this.flow.expenses.reduce((sum, current) => sum + current.valuePLN, 0);
+    this.flow.expenses.reduce(
+      (sum, current) => sum + current.currentCurrencyValue,
+      0
+    );
 
   // sumP: number = 1;
   // sumE: number = 1;
@@ -68,7 +77,7 @@ export class DashboardComponent implements OnInit {
   sumInvestments() {
     return this.flow.profits
       .filter((p) => p.isInterestProfit)
-      .reduce((sum, current) => sum + current.valuePLN, 0);
+      .reduce((sum, current) => sum + current.currentCurrencyValue, 0);
   }
 
   onProfitClicked(profit: Profit) {
@@ -76,7 +85,9 @@ export class DashboardComponent implements OnInit {
   }
 
   getValue(valueObject: ValueObject) {
-    const value = this.isPLN ? valueObject.valuePLN : valueObject.value;
+    const value = this.isPLN
+      ? valueObject.currentCurrencyValue
+      : valueObject.value;
     return value;
   }
 

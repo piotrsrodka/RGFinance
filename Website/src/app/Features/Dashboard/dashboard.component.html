@@ -2,9 +2,8 @@
     <h1>Dashboard - finance</h1>
 
     <div class="d-flex">
-        <span>USD: {{ forex?.usd.toFixed(3) }} PLN, EUR: {{ forex?.eur.toFixed(3) }} PLN, GOLD: {{
-            forex?.gold.toFixed(0) }}
-            PLN</span>
+        <span>USD: <strong>{{ forex?.usd.toFixed(3) }}</strong> PLN, EUR: <strong>{{ forex?.eur.toFixed(3) }}</strong>
+            PLN, GOLD: <strong>{{ forex?.gold.toFixed(0) }}</strong> PLN</span>
         <span class="fill-remaining-space">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <label class="switch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PLN
             <input type="checkbox" (click)="isPLN = !isPLN" />
