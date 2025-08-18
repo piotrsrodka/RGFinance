@@ -19,6 +19,9 @@ namespace Database
         public DbSet<Profit> Profits { get; set; } = null!;
         public DbSet<Expense> Expenses { get; set; } = null!;
 
+        /* Forex */
+        public DbSet<Forex> Forexes { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder

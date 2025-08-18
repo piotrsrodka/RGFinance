@@ -1,6 +1,6 @@
 using Database;
 using Database.Entities;
-using RGFinance.Forex;
+using Microsoft.EntityFrameworkCore;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -14,8 +14,32 @@ namespace RGFinance.FlowFeature
         {
             this.context = context;
         }
-         
+
         public async Task<Forex> GetForex()
+        {
+            Forex result = null!;
+
+            try
+            {
+                result = await this.GetForexFromApi();
+                result.Online = true;
+            }
+            catch (Exception ex)
+            {
+                result = await this.context.Forexes
+                    .OrderByDescending(f => f.Time)
+                    .FirstOrDefaultAsync()!;
+            }
+
+            if (result == null)
+            {
+                throw new InvalidOperationException("No forex data available.");
+            }
+
+            return result;
+        }
+
+        public async Task<Forex> GetForexFromApi()
         {
             // From StackOverflow - I have no idea how and why it works ;)
 
@@ -68,6 +92,15 @@ namespace RGFinance.FlowFeature
                 Eur = plneur,
                 Gold = goldPricePln,
             };
+
+            var dbForexWithCurrentTime = await this.context.Forexes
+                    .FirstOrDefaultAsync(f => f.Time == forex.Time);
+
+            if (dbForexWithCurrentTime == null)
+            {
+                this.context.Forexes.Add(forex);
+                await this.context.SaveChangesAsync();
+            }
 
             return forex;
         }

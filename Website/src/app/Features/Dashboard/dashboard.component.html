@@ -2,6 +2,7 @@
     <h1>Dashboard - finance</h1>
 
     <div class="d-flex">
+
         <span>USD: <strong>{{ forex?.usd.toFixed(3) }}</strong> PLN, EUR: <strong>{{ forex?.eur.toFixed(3) }}</strong>
             PLN, GOLD: <strong>{{ forex?.gold.toFixed(0) }}</strong> PLN</span>
         <span class="fill-remaining-space">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -17,6 +18,7 @@
             <span class="slider round"></span>
         </label>
     </div>
+    <span *ngIf="!forex.online">[Offline dane historyczne z {{forex.time}}]</span>
 
     <div class="row my-5">
 
@@ -36,7 +38,8 @@
             <div *ngFor="let asset of flow.assets" (click)="asset.isEditing = true" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ asset.name }}</div>
-                    <div class="col-3 d-flex justify-content-end">{{ getValue(asset) | number: '3.0-0' }}&nbsp;{{ isBaseCurrency
+                    <div class="col-3 d-flex justify-content-end">{{ getValue(asset) | number: '3.0-0' }}&nbsp;{{
+                        isBaseCurrency
                         ? currentBaseCurrency
                         : asset.currency
                         }}&nbsp;</div>
@@ -67,7 +70,8 @@
             <div *ngFor="let profit of flow.profits" (click)="onProfitClicked(profit)" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ profit.name }}</div>
-                    <div class="col-3 d-flex justify-content-end">{{ getValue(profit) | number: '3.0-0' }}&nbsp;{{ isBaseCurrency
+                    <div class="col-3 d-flex justify-content-end">{{ getValue(profit) | number: '3.0-0' }}&nbsp;{{
+                        isBaseCurrency
                         ? currentBaseCurrency :profit.currency
                         }}&nbsp;</div>
                 </div>
