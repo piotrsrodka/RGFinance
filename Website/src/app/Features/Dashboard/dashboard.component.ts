@@ -37,31 +37,25 @@ export class DashboardComponent implements OnInit {
 
   isEditingAsset = false;
 
-  sumS = () =>
-    this.flow.assets.reduce(
-      (sum, current) => sum + current.currentCurrencyValue,
-      0
-    );
+  sumA = () =>
+    this.flow.assets.reduce((sum, item) => sum + item.currentCurrencyValue, 0);
+
   sumP = () =>
-    this.flow.profits.reduce(
-      (sum, current) => sum + current.currentCurrencyValue,
-      0
-    );
+    this.flow.profits.reduce((sum, item) => sum + item.currentCurrencyValue, 0);
+
   sumE = () =>
     this.flow.expenses.reduce(
-      (sum, current) => sum + current.currentCurrencyValue,
+      (sum, item) => sum + item.currentCurrencyValue,
       0
     );
-
-  // sumP: number = 1;
-  // sumE: number = 1;
 
   assetToAdd = Utils.getClearAsset();
   profitToAdd: Profit = Utils.getClearProfit();
   expenseToAdd: Expense = Utils.getClearExpense();
 
   forex: Forex;
-  isPLN = false;
+  isBaseCurrency = false;
+  selectedBaseCurrency = 'PLN';
 
   constructor(private flowService: DashboardService) {}
 
@@ -85,46 +79,48 @@ export class DashboardComponent implements OnInit {
   }
 
   getValue(valueObject: ValueObject) {
-    const value = this.isPLN
+    const value = this.isBaseCurrency
       ? valueObject.currentCurrencyValue
       : valueObject.value;
     return value;
   }
 
   getFlow() {
-    this.flowService.Get(this.userId).subscribe((response) => {
-      this.flow = response;
+    this.flowService
+      .Get(this.userId, this.selectedBaseCurrency)
+      .subscribe((response) => {
+        this.flow = response;
 
-      this.graph = {
-        data: [
-          {
-            x: this.getX(this.months),
-            y: this.getY(this.months),
-            type: 'scatter',
-            mode: 'lines+markers+text',
-            marker: { color: 'black' },
-          },
-        ],
-        layout: {
-          autosize: true,
-          // width: 820,
-          // height: 400,
-          xaxis: {
-            title: {
-              text: 'Miesiąc',
+        this.graph = {
+          data: [
+            {
+              x: this.getX(this.months),
+              y: this.getY(this.months),
+              type: 'scatter',
+              mode: 'lines+markers+text',
+              marker: { color: 'black' },
             },
-          },
-          yaxis: {
-            title: {
-              text: 'Flow (kasa) PLN',
+          ],
+          layout: {
+            autosize: true,
+            // width: 820,
+            // height: 400,
+            xaxis: {
+              title: {
+                text: 'Miesiąc',
+              },
             },
+            yaxis: {
+              title: {
+                text: `Flow (kasa) ${this.selectedBaseCurrency}`,
+              },
+            },
+            showlegend: false,
+            pierdola: 12,
+            paper_bgcolor: 'white',
           },
-          showlegend: false,
-          pierdola: 12,
-          paper_bgcolor: 'white',
-        },
-      };
-    });
+        };
+      });
   }
 
   addOrUpdateAsset(asset: Asset) {
@@ -226,7 +222,7 @@ export class DashboardComponent implements OnInit {
   }
 
   flowFunction(m) {
-    return this.flow.bigSum + m * (this.sumP() - this.sumE());
+    return this.getBigSum() + m * (this.sumP() - this.sumE());
   }
 
   getBalanceColor() {
@@ -243,6 +239,18 @@ export class DashboardComponent implements OnInit {
         return i;
       }
     }
+  }
+
+  onBaseCurrencyChange() {
+    this.getFlow();
+  }
+
+  get currentBaseCurrency() {
+    return this.selectedBaseCurrency;
+  }
+
+  getBigSum() {
+    return this.sumA();
   }
 
   plotFlow() {

@@ -15,7 +15,7 @@ namespace RGFinance.FlowFeature
             this.context = context;
         }
 
-        public async Task<Flow> GetFlowAsync(int id)
+        public async Task<Flow> GetFlowAsync(int id, BaseCurrency baseCurrency = BaseCurrency.PLN)
         {
             Forex? forex = await this.GetForex();
 
@@ -36,32 +36,21 @@ namespace RGFinance.FlowFeature
 
             foreach (var profit in profits)
             {
-                this.ExchangeFromPLN(profit, forex);
+                this.ExchangeToCurrency(profit, forex, baseCurrency);
             }
 
             foreach (var asset in assets)
             {
-                this.ExchangeFromPLN(asset, forex);
+                this.ExchangeToCurrency(asset, forex, baseCurrency);
             }
 
             foreach (var expense in expenses)
             {
-                this.ExchangeFromPLN(expense, forex);
+                this.ExchangeToCurrency(expense, forex, baseCurrency);
             }
-
-
-            decimal bigSum = 0;
-
-            decimal plns = assets.Where(s => s.Currency.ToUpper() == "PLN").Sum(s => s.Value);
-            decimal eurs = assets.Where(s => s.Currency.ToUpper() == "EUR").Sum(s => s.Value * forex.Eur);
-            decimal usds = assets.Where(s => s.Currency.ToUpper() == "USD").Sum(s => s.Value * forex.Usd);
-            decimal goldie = assets.Where(s => s.Currency.ToUpper() == "GOZ").Sum(s => s.Value * forex.Gold);
-
-            bigSum = plns + eurs + usds + goldie;
 
             return new Flow
             {
-                BigSum = bigSum,
                 Expenses = expenses.OrderByDescending(e => e.CurrentCurrencyValue).ToList(),
                 Assets = assets.OrderByDescending(s => s.CurrentCurrencyValue).ToList(),
                 Profits = profits.OrderByDescending(p => p.CurrentCurrencyValue).ToList(),
@@ -164,24 +153,33 @@ namespace RGFinance.FlowFeature
             await this.context.SaveChangesAsync();
         }
 
-        private void ExchangeFromPLN(ValueObject valueObject, Forex forex)
+        private void ExchangeToCurrency(ValueObject valueObject, Forex forex, BaseCurrency baseCurrency)
         {
-            if (valueObject.Currency.ToUpper() == "PLN")
+            decimal valueInPLN = GetValueInPLN(valueObject, forex);
+            valueObject.CurrentCurrencyValue = ConvertFromPLN(valueInPLN, forex, baseCurrency);
+        }
+
+        private static decimal GetValueInPLN(ValueObject valueObject, Forex forex)
+        {
+            return valueObject.Currency.ToUpper() switch
             {
-                valueObject.CurrentCurrencyValue = valueObject.Value;
-            }
-            else if (valueObject.Currency.ToUpper() == "EUR")
+                "PLN" => valueObject.Value,
+                "EUR" => valueObject.Value * forex.Eur,
+                "USD" => valueObject.Value * forex.Usd,
+                "GOZ" => valueObject.Value * forex.Gold,
+                _ => valueObject.Value
+            };
+        }
+
+        private static decimal ConvertFromPLN(decimal valueInPLN, Forex forex, BaseCurrency baseCurrency)
+        {
+            return baseCurrency switch
             {
-                valueObject.CurrentCurrencyValue = valueObject.Value * forex.Eur;
-            }
-            else if (valueObject.Currency.ToUpper() == "USD")
-            {
-                valueObject.CurrentCurrencyValue = valueObject.Value * forex.Usd;
-            }
-            else if (valueObject.Currency.ToUpper() == "GOZ")
-            {
-                valueObject.CurrentCurrencyValue = valueObject.Value * forex.Gold;
-            }
+                BaseCurrency.PLN => valueInPLN,
+                BaseCurrency.EUR => valueInPLN / forex.Eur,
+                BaseCurrency.USD => valueInPLN / forex.Usd,
+                _ => valueInPLN
+            };
         }
 
         private static List<Profit> GetInterestProfits(List<Asset> assets)

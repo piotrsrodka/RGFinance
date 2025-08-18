@@ -5,8 +5,15 @@
         <span>USD: <strong>{{ forex?.usd.toFixed(3) }}</strong> PLN, EUR: <strong>{{ forex?.eur.toFixed(3) }}</strong>
             PLN, GOLD: <strong>{{ forex?.gold.toFixed(0) }}</strong> PLN</span>
         <span class="fill-remaining-space">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <label class="switch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PLN
-            <input type="checkbox" (click)="isPLN = !isPLN" />
+
+        <select [(ngModel)]="selectedBaseCurrency" (change)="onBaseCurrencyChange()" class="currency-dropdown">
+            <option value="PLN">PLN</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+        </select>
+
+        <label class="switch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Base
+            <input type="checkbox" (click)="isBaseCurrency = !isBaseCurrency" />
             <span class="slider round"></span>
         </label>
     </div>
@@ -17,7 +24,8 @@
 
         <div class="col-4">
             <strong>Co mam</strong>
-            <div class="float-right"><strong>{{ flow.bigSum.toFixed(0) | number: '3.0-0' }} PLN</strong></div>
+            <div class="float-right"><strong>{{ getBigSum().toFixed(0) | number: '3.0-0' }} {{ currentBaseCurrency
+                    }}</strong></div>
             <hr class="RGF-hr" />
             <div class="row">
                 <div class="col-8"><strong>Nazwa</strong></div>
@@ -28,8 +36,8 @@
             <div *ngFor="let asset of flow.assets" (click)="asset.isEditing = true" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ asset.name }}</div>
-                    <div class="col-3 d-flex justify-content-end">{{ getValue(asset) | number: '3.0-0' }}&nbsp;{{ isPLN
-                        ? 'PLN'
+                    <div class="col-3 d-flex justify-content-end">{{ getValue(asset) | number: '3.0-0' }}&nbsp;{{ isBaseCurrency
+                        ? currentBaseCurrency
                         : asset.currency
                         }}&nbsp;</div>
                     <div class="col-1 float-right">{{ asset.interest }}</div>
@@ -49,7 +57,7 @@
 
         <div class="col-4">
             <strong>PRZYCHODY</strong>
-            <div class="float-right"><strong>{{ sumP() | number: '3.0-0' }} PLN</strong></div>
+            <div class="float-right"><strong>{{ sumP() | number: '3.0-0' }} {{ currentBaseCurrency }}</strong></div>
             <hr class="RGF-hr" />
             <div class="row">
                 <div class="col-8"><strong>Nazwa</strong></div>
@@ -59,8 +67,8 @@
             <div *ngFor="let profit of flow.profits" (click)="onProfitClicked(profit)" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ profit.name }}</div>
-                    <div class="col-3 d-flex justify-content-end">{{ getValue(profit) | number: '3.0-0' }}&nbsp;{{ isPLN
-                        ? 'PLN' :profit.currency
+                    <div class="col-3 d-flex justify-content-end">{{ getValue(profit) | number: '3.0-0' }}&nbsp;{{ isBaseCurrency
+                        ? currentBaseCurrency :profit.currency
                         }}&nbsp;</div>
                 </div>
                 <app-edit-profit [profit]="profit" [isVisible]="profit.isEditing" (save)="addOrUpdateProfit(profit)"
@@ -74,7 +82,7 @@
             <hr class="RGF-hr" />
             <div class="row">
                 <div class="col-8">Inwestycje %% razem:</div>
-                <div class="col-3">{{ sumInvestments() | number: '3.0-0' }}&nbsp;PLN</div>
+                <div class="col-3">{{ sumInvestments() | number: '3.0-0' }}&nbsp;{{ currentBaseCurrency }}</div>
             </div>
 
             <div *ngIf="!isAddingProfit" (click)="isAddingProfit = true" class="hoverable blue">&plus; Dodaj</div>
@@ -84,7 +92,7 @@
 
         <div class="col-3">
             <strong>WYDATKI</strong>
-            <div class="float-right"><strong>{{ sumE() | number: '3.0-0' }} PLN</strong></div>
+            <div class="float-right"><strong>{{ sumE() | number: '3.0-0' }} {{ currentBaseCurrency }}</strong></div>
             <hr class="RGF-hr" />
             <div class="row">
                 <div class="col-6"><strong>Nazwa</strong></div>
@@ -95,7 +103,7 @@
                 <div class="row">
                     <div class="col-8">{{ expense.name }}</div>
                     <div class="col-3 d-flex justify-content-end">{{ getValue(expense) | number: '3.0-0' }}&nbsp;{{
-                        isPLN ? 'PLN' :expense.currency
+                        isBaseCurrency ? currentBaseCurrency :expense.currency
                         }}&nbsp;</div>
                 </div>
                 <app-edit-expense [expense]="expense" [isVisible]="expense.isEditing"
@@ -116,7 +124,7 @@
             </strong>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <strong>Bilans miesięczny: <span [ngClass]="getBalanceColor()">{{ getBalance() | number: '3.0-0'
-                    }}</span>&nbsp;PLN</strong>
+                    }}</span>&nbsp;{{ currentBaseCurrency }}</strong>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBancruptcy() }}</strong>
         </div>

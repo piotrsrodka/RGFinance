@@ -18,8 +18,9 @@ export class DashboardService {
 
   flowUrl = this.environment.apiUrl + '/flow/';
 
-  Get(id: number): Observable<Flow> {
-    return this.httpClient.get<Flow>(this.flowUrl + id);
+  Get(id: number, baseCurrency?: string): Observable<Flow> {
+    const params = baseCurrency ? `?baseCurrency=${baseCurrency}` : '';
+    return this.httpClient.get<Flow>(this.flowUrl + id + params);
   }
 
   GetForex(): Observable<Forex> {
