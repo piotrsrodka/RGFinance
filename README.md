@@ -39,7 +39,7 @@ MS SQL
 ```bash
 git clone https://github.com/piotrsrodka/RGFinance.git
 cd RGFinance
-docker-compose up -d
+docker-compose up
 ```
 
 **That's it!** 🎉
@@ -54,23 +54,21 @@ docker-compose up -d
 docker-compose down
 ```
 
-## Development server
+## Development
 
 ### Hybrid Development (Recommended) ⚡
 
-1. Start database: `dev-start.bat`
+1. Start database: `docker-compose -f docker-compose.dev.yml up`
 2. Start backend: `cd WebApi && dotnet run`
 3. Start frontend: `cd Website && ng serve`
 
 Navigate to `http://localhost:4300/`
 
-**Benefits:** Fast development + consistent database
-
-#### Database Management
+#### Docker Database Management
 
 ```bash
 # Start dev database
-docker-compose -f docker-compose.dev.yml up -d
+docker-compose -f docker-compose.dev.yml up
 
 # Stop dev database (KEEPS data)
 docker-compose -f docker-compose.dev.yml down
@@ -82,8 +80,6 @@ docker-compose -f docker-compose.dev.yml down -v
 docker volume ls
 ```
 
-**Data Persistence:** Your dev database data is stored in `rgfinance_sqldata-dev` Docker volume and survives container restarts.
-
 #### Database Migrations
 
 ```bash
@@ -92,8 +88,8 @@ dotnet ef migrations add YourMigrationName
 dotnet ef database update
 ```
 
-### Development server (without Docker)
+### Development without Docker
 
-Angular run `ng serve` for a dev server. Navigate to `http://localhost:4300/`.
-For backend `dotnet run` in Api Project directory
-Remember to update-database via dotnet-ef tools
+1. Install MS SQL Database
+2. Update-database via dotnet-ef tools
+3. Front + Backend same as in Hybrid development
