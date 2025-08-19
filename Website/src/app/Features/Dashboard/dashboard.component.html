@@ -18,7 +18,9 @@
             <span class="slider round"></span>
         </label>
     </div>
-    <span *ngIf="!forex.online">[Offline dane historyczne z {{forex.time}}]</span>
+    <span *ngIf="forex.online">Dane online z <strong title="European Central Bank">ECB</strong>
+        {{forex.time}}</span>
+    <span *ngIf="!forex.online">Dane off-line historyczne z {{forex.time}}</span>
 
     <div class="row my-5">
 
