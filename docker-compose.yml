@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # SQL Server Database
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: YourStrong!Passw0rd
+      ACCEPT_EULA: Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - rgfinance-network
+
+  # .NET Backend API
+  api:
+    build:
+      context: ./WebApi
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__RGF=Server=db;Database=RGFinance;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
+    depends_on:
+      - db
+    ports:
+      - "5000:80"
+    networks:
+      - rgfinance-network
+
+  # Angular Frontend
+  web:
+    build:
+      context: ./Website
+      dockerfile: Dockerfile
+    ports:
+      - "4300:80"
+    depends_on:
+      - api
+    networks:
+      - rgfinance-network
+
+volumes:
+  sqldata:
+
+networks:
+  rgfinance-network:
+    driver: bridge

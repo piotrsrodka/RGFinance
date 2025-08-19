@@ -28,7 +28,29 @@ Angular 13 |
 Dotnet 6 |
 MS SQL
 
-## Development server
+## Quick Start with Docker 🐳
+
+### Prerequisites
+- Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+### Run the Application
+```bash
+git clone <your-repo-url>
+cd RGFinance
+docker-compose up -d
+```
+
+**That's it!** 🎉
+- Frontend: http://localhost:4300
+- Backend API: http://localhost:5000
+- Database runs automatically
+
+### Stop the Application
+```bash
+docker-compose down
+```
+
+## Development server (without Docker)
 
 Angular run `ng serve` for a dev server. Navigate to `http://localhost:4300/`.
 For backend `dotnet run` in Api Project directory

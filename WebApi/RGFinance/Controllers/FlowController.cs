@@ -35,21 +35,21 @@ namespace RGFinance.Controllers
         }
 
         [HttpPost("asset")]
-        public async Task<ActionResult> AddOrUpdateAsset(Asset asset)
+        public async Task<ActionResult> AddOrUpdateAsset([FromBody] Asset asset)
         {
             await this.flowService.AddOrUpdateAsset(asset);
             return Ok();
         }
 
         [HttpPost("profit")]
-        public async Task<ActionResult> AddOrUpdateProfit(Profit profit)
+        public async Task<ActionResult> AddOrUpdateProfit([FromBody] Profit profit)
         {
             await this.flowService.AddOrUpdateProfit(profit);
             return Ok();
         }
 
         [HttpPost("expense")]
-        public async Task<ActionResult> AddOrUpdateExpense(Expense expense)
+        public async Task<ActionResult> AddOrUpdateExpense([FromBody] Expense expense)
         {
             await this.flowService.AddOrUpdateExpense(expense);
             return Ok();
