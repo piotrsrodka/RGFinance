@@ -23,7 +23,7 @@ namespace RGFinance.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FlowFeature.Flow>> Get(int id, [FromQuery] BaseCurrency baseCurrency = BaseCurrency.PLN)
         {
-            var flow = await this.flowService.GetFlowAsync(id, baseCurrency);
+            var flow = await this.flowService.GetFlowAsync(baseCurrency);
             return flow;
         }
 

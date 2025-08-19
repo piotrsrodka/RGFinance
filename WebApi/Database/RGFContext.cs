@@ -24,13 +24,32 @@ namespace Database
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder
-               .Entity<ValueObject>()
-               .Property(c => c.Currency)
-               .HasConversion(
-                   s => s.ToString(),
-                   s => (CurrencyType)Enum.Parse(typeof(CurrencyType), s));
+            // Force separate tables instead of TPH (Table Per Hierarchy)
+            builder.Entity<Asset>().ToTable("Assets");
+            builder.Entity<Profit>().ToTable("Profits"); 
+            builder.Entity<Expense>().ToTable("Expenses");
 
+            // Configure Currency enum conversion for each entity
+            builder
+                .Entity<Asset>()
+                .Property(c => c.Currency)
+                .HasConversion(
+                    s => s.ToString(),
+                    s => (CurrencyType)Enum.Parse(typeof(CurrencyType), s));
+
+            builder
+                .Entity<Profit>()
+                .Property(c => c.Currency)
+                .HasConversion(
+                    s => s.ToString(),
+                    s => (CurrencyType)Enum.Parse(typeof(CurrencyType), s));
+
+            builder
+                .Entity<Expense>()
+                .Property(c => c.Currency)
+                .HasConversion(
+                    s => s.ToString(),
+                    s => (CurrencyType)Enum.Parse(typeof(CurrencyType), s));
 
             builder
                 .Entity<Asset>()

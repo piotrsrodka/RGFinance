@@ -4,7 +4,7 @@ namespace RGFinance.FlowFeature
 {
     public interface IFlowService
     {
-        Task<Flow> GetFlowAsync(int id, BaseCurrency baseCurrency = BaseCurrency.PLN);
+        Task<Flow> GetFlowAsync(BaseCurrency baseCurrency = BaseCurrency.PLN);
         Task<int> AddOrUpdateAsset(Asset asset);
         Task<int> AddOrUpdateProfit(Profit profit);
         Task<int> AddOrUpdateExpense(Expense expense);

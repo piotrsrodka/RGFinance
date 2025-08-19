@@ -15,7 +15,7 @@ namespace RGFinance.FlowFeature
             this.forexService = forexService;
         }
 
-        public async Task<Flow> GetFlowAsync(int id, BaseCurrency baseCurrency = BaseCurrency.PLN)
+        public async Task<Flow> GetFlowAsync(BaseCurrency baseCurrency = BaseCurrency.PLN)
         {
             Forex? forex = await this.forexService.GetForex();
 
