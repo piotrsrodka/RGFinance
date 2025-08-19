@@ -1,9 +1,10 @@
 namespace RGFinance.FlowFeature
 {
+    // Alias for base currencies (subset of CurrencyType)
     public enum BaseCurrency
     {
-        PLN,
-        USD,
-        EUR
+        PLN = CurrencyType.PLN,
+        USD = CurrencyType.USD,
+        EUR = CurrencyType.EUR
     }
 }
