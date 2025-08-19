@@ -22,12 +22,6 @@ Assets have Yearly Interest Rate associated with them, so you can automatically 
 If your monthly balance is in the red you will see when will the bankruptcy happen.
 On the other hand when in the black app will tell you when will you become a millionaire!
 
-## Stack
-
-Angular 13 |
-Dotnet 6 |
-MS SQL
-
 ## Quick Start with Docker 🐳
 
 ### Prerequisites
@@ -61,6 +55,12 @@ docker-compose down
 ```
 
 ## Development
+
+### Stack
+
+Angular 13 |
+Dotnet 6 |
+MS SQL
 
 ### Hybrid Development (Recommended) ⚡
 
