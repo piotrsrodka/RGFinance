@@ -8,6 +8,7 @@ import Utils from '../../utils/utils';
 import { DashboardService } from './dashboard.service';
 import { ValueObject } from '../../models/valueObject';
 import { PlotLocalService } from '../Plot/plot.local.service';
+import { Currency } from '../../models/currency';
 
 @Component({
   selector: 'app-dashboard',
@@ -55,7 +56,8 @@ export class DashboardComponent implements OnInit {
 
   forex: Forex;
   isBaseCurrency = false;
-  selectedBaseCurrency = 'PLN';
+  selectedBaseCurrency = Currency.PLN;
+  Currency = Currency; // for template access
 
   constructor(
     private flowService: DashboardService,
@@ -213,27 +215,27 @@ export class DashboardComponent implements OnInit {
   getForexRateInBaseCurrency(currency: string): number {
     if (!this.forex) return 0;
 
-    if (this.selectedBaseCurrency === 'PLN') {
+    if (this.selectedBaseCurrency === Currency.PLN) {
       const rates = {
-        USD: this.forex.usd,
-        EUR: this.forex.eur,
-        GOLD: this.forex.gold,
+        [Currency.USD]: this.forex.usd,
+        [Currency.EUR]: this.forex.eur,
+        [Currency.GOLD]: this.forex.gold,
       };
 
       return rates[currency] || 1;
-    } else if (this.selectedBaseCurrency === 'USD') {
+    } else if (this.selectedBaseCurrency === Currency.USD) {
       const rates = {
-        PLN: 1 / this.forex.usd,
-        EUR: this.forex.eur / this.forex.usd,
-        GOLD: this.forex.gold / this.forex.usd,
+        [Currency.PLN]: 1 / this.forex.usd,
+        [Currency.EUR]: this.forex.eur / this.forex.usd,
+        [Currency.GOLD]: this.forex.gold / this.forex.usd,
       };
 
       return rates[currency] || 1;
-    } else if (this.selectedBaseCurrency === 'EUR') {
+    } else if (this.selectedBaseCurrency === Currency.EUR) {
       const rates = {
-        PLN: 1 / this.forex.eur,
-        USD: this.forex.usd / this.forex.eur,
-        GOLD: this.forex.gold / this.forex.eur,
+        [Currency.PLN]: 1 / this.forex.eur,
+        [Currency.USD]: this.forex.usd / this.forex.eur,
+        [Currency.GOLD]: this.forex.gold / this.forex.eur,
       };
 
       return rates[currency] || 1;

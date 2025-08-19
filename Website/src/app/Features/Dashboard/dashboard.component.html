@@ -4,21 +4,21 @@
     <div class="d-flex">
 
         <span>
-            <span *ngIf="shouldShowCurrency('USD')">USD: <strong>{{ getForexRateInBaseCurrency('USD').toFixed(3)
+            <span *ngIf="shouldShowCurrency(Currency.USD)">USD: <strong>{{ getForexRateInBaseCurrency(Currency.USD).toFixed(3)
                     }}</strong> {{ selectedBaseCurrency }}, </span>
-            <span *ngIf="shouldShowCurrency('EUR')">EUR: <strong>{{ getForexRateInBaseCurrency('EUR').toFixed(3)
+            <span *ngIf="shouldShowCurrency(Currency.EUR)">EUR: <strong>{{ getForexRateInBaseCurrency(Currency.EUR).toFixed(3)
                     }}</strong> {{ selectedBaseCurrency }}, </span>
-            <span *ngIf="shouldShowCurrency('PLN')">PLN: <strong>{{ getForexRateInBaseCurrency('PLN').toFixed(3)
+            <span *ngIf="shouldShowCurrency(Currency.PLN)">PLN: <strong>{{ getForexRateInBaseCurrency(Currency.PLN).toFixed(3)
                     }}</strong> {{ selectedBaseCurrency }}, </span>
-            <span *ngIf="shouldShowCurrency('GOLD')">GOLD: <strong>{{ getForexRateInBaseCurrency('GOLD').toFixed(0)
+            <span *ngIf="shouldShowCurrency(Currency.GOLD)">GOLD: <strong>{{ getForexRateInBaseCurrency(Currency.GOLD).toFixed(0)
                     }}</strong> {{ selectedBaseCurrency }}</span>
         </span>
         <span class="fill-remaining-space">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
         <select [(ngModel)]="selectedBaseCurrency" (change)="onBaseCurrencyChange()" class="currency-dropdown">
-            <option value="PLN">PLN</option>
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
+            <option [value]="Currency.PLN">PLN</option>
+            <option [value]="Currency.USD">USD</option>
+            <option [value]="Currency.EUR">EUR</option>
         </select>
 
         <label class="switch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Base
