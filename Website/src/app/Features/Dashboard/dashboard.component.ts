@@ -141,9 +141,11 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    this.flowService.DeleteAsset(asset).subscribe(() => {
-      this.getFlow();
-    });
+    if (confirm(`Czy na pewno chcesz usunąć zasób "${asset.name}"?`)) {
+      this.flowService.DeleteAsset(asset).subscribe(() => {
+        this.getFlow();
+      });
+    }
   }
 
   onDeleteProfit(profit) {
@@ -153,9 +155,11 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    this.flowService.DeleteProfit(profit).subscribe(() => {
-      this.getFlow();
-    });
+    if (confirm(`Czy na pewno chcesz usunąć przychód "${profit.name}"?`)) {
+      this.flowService.DeleteProfit(profit).subscribe(() => {
+        this.getFlow();
+      });
+    }
   }
 
   onDeleteExpense(expense) {
@@ -165,9 +169,11 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    this.flowService.DeleteExpense(expense).subscribe(() => {
-      this.getFlow();
-    });
+    if (confirm(`Czy na pewno chcesz usunąć wydatek "${expense.name}"?`)) {
+      this.flowService.DeleteExpense(expense).subscribe(() => {
+        this.getFlow();
+      });
+    }
   }
 
   addOrUpdateExpense(expense: Expense) {
