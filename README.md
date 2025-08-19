@@ -38,7 +38,13 @@ MS SQL
 
 ```bash
 git clone https://github.com/piotrsrodka/RGFinance.git
+```
+
+```bash
 cd RGFinance
+```
+
+```bash
 docker-compose up
 ```
 
