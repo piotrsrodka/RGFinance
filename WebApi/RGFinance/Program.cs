@@ -25,8 +25,7 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<RGFContext>();
     try
     {
-        context.Database.EnsureCreated(); // Creates database if not exists
-        // Alternatively use: context.Database.Migrate(); if you have migrations
+        context.Database.Migrate(); // Run all pending migrations
     }
     catch (Exception ex)
     {

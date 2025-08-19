@@ -54,7 +54,45 @@ docker-compose up -d
 docker-compose down
 ```
 
-## Development server (without Docker)
+## Development server
+
+### Hybrid Development (Recommended) ⚡
+
+1. Start database: `dev-start.bat`
+2. Start backend: `cd WebApi && dotnet run`
+3. Start frontend: `cd Website && ng serve`
+
+Navigate to `http://localhost:4300/`
+
+**Benefits:** Fast development + consistent database
+
+#### Database Management
+
+```bash
+# Start dev database
+docker-compose -f docker-compose.dev.yml up -d
+
+# Stop dev database (KEEPS data)
+docker-compose -f docker-compose.dev.yml down
+
+# Stop and REMOVE dev data
+docker-compose -f docker-compose.dev.yml down -v
+
+# View persistent volumes
+docker volume ls
+```
+
+**Data Persistence:** Your dev database data is stored in `rgfinance_sqldata-dev` Docker volume and survives container restarts.
+
+#### Database Migrations
+
+```bash
+cd WebApi
+dotnet ef migrations add YourMigrationName
+dotnet ef database update
+```
+
+### Development server (without Docker)
 
 Angular run `ng serve` for a dev server. Navigate to `http://localhost:4300/`.
 For backend `dotnet run` in Api Project directory

@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  # Only database for development
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: YourStrong!Passw0rd
+      ACCEPT_EULA: Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata-dev:/var/opt/mssql
+    networks:
+      - rgfinance-dev-network
+
+volumes:
+  sqldata-dev:
+
+networks:
+  rgfinance-dev-network:
+    driver: bridge
