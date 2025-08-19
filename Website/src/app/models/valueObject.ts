@@ -1,5 +1,3 @@
-import { Rate } from './rate';
-
 export interface ValueObject {
   id: number;
   name: string;

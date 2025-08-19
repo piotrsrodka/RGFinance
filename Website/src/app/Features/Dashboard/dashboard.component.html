@@ -3,8 +3,16 @@
 
     <div class="d-flex">
 
-        <span>USD: <strong>{{ forex?.usd.toFixed(3) }}</strong> PLN, EUR: <strong>{{ forex?.eur.toFixed(3) }}</strong>
-            PLN, GOLD: <strong>{{ forex?.gold.toFixed(0) }}</strong> PLN</span>
+        <span>
+            <span *ngIf="shouldShowCurrency('USD')">USD: <strong>{{ getForexRateInBaseCurrency('USD').toFixed(3)
+                    }}</strong> {{ selectedBaseCurrency }}, </span>
+            <span *ngIf="shouldShowCurrency('EUR')">EUR: <strong>{{ getForexRateInBaseCurrency('EUR').toFixed(3)
+                    }}</strong> {{ selectedBaseCurrency }}, </span>
+            <span *ngIf="shouldShowCurrency('PLN')">PLN: <strong>{{ getForexRateInBaseCurrency('PLN').toFixed(3)
+                    }}</strong> {{ selectedBaseCurrency }}, </span>
+            <span *ngIf="shouldShowCurrency('GOLD')">GOLD: <strong>{{ getForexRateInBaseCurrency('GOLD').toFixed(0)
+                    }}</strong> {{ selectedBaseCurrency }}</span>
+        </span>
         <span class="fill-remaining-space">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
         <select [(ngModel)]="selectedBaseCurrency" (change)="onBaseCurrencyChange()" class="currency-dropdown">
@@ -28,7 +36,7 @@
 
         <div class="col-4">
             <strong>Co mam</strong>
-            <div class="float-right"><strong>{{ getBigSum().toFixed(0) | number: '3.0-0' }} {{ currentBaseCurrency
+            <div class="float-right"><strong>{{ sumA().toFixed(0) | number: '3.0-0' }} {{ currentBaseCurrency
                     }}</strong></div>
             <hr class="RGF-hr" />
             <div class="row">
@@ -132,7 +140,7 @@
             <strong>Bilans miesięczny: <span [ngClass]="getBalanceColor()">{{ getBalance() | number: '3.0-0'
                     }}</span>&nbsp;{{ currentBaseCurrency }}</strong>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBancruptcy() }}</strong>
+            <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBankruptcy() }}</strong>
         </div>
         <br />
         <!-- <canvas id="flow-canvas" width="600" height="200"></canvas> -->

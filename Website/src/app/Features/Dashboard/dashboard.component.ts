@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Axes } from '../../models/axes';
 import { Expense } from '../../models/expense';
 import { Flow } from '../../models/flow';
 import { Forex } from '../../models/forex';
@@ -8,6 +7,7 @@ import { Asset } from '../../models/asset';
 import Utils from '../../utils/utils';
 import { DashboardService } from './dashboard.service';
 import { ValueObject } from '../../models/valueObject';
+import { PlotLocalService } from '../Plot/plot.local.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -57,7 +57,10 @@ export class DashboardComponent implements OnInit {
   isBaseCurrency = false;
   selectedBaseCurrency = 'PLN';
 
-  constructor(private flowService: DashboardService) {}
+  constructor(
+    private flowService: DashboardService,
+    private plotService: PlotLocalService
+  ) {}
 
   ngOnInit(): void {
     this.userId = 1;
@@ -91,35 +94,13 @@ export class DashboardComponent implements OnInit {
       .subscribe((response) => {
         this.flow = response;
 
-        this.graph = {
-          data: [
-            {
-              x: this.getX(this.months),
-              y: this.getY(this.months),
-              type: 'scatter',
-              mode: 'lines+markers+text',
-              marker: { color: 'black' },
-            },
-          ],
-          layout: {
-            autosize: true,
-            // width: 820,
-            // height: 400,
-            xaxis: {
-              title: {
-                text: 'Miesiąc',
-              },
-            },
-            yaxis: {
-              title: {
-                text: `Flow (kasa) ${this.selectedBaseCurrency}`,
-              },
-            },
-            showlegend: false,
-            pierdola: 12,
-            paper_bgcolor: 'white',
-          },
-        };
+        this.graph = this.plotService.getPlot(
+          this.months,
+          this.sumA(),
+          this.sumP(),
+          this.sumE(),
+          this.selectedBaseCurrency
+        );
       });
   }
 
@@ -201,28 +182,8 @@ export class DashboardComponent implements OnInit {
     this.expenseToAdd = Utils.getClearExpense();
   }
 
-  getX(m) {
-    let result = [];
-
-    for (let i = 0; i < m; i++) {
-      result.push(i);
-    }
-
-    return result;
-  }
-
-  getY(m) {
-    let result = [];
-
-    for (let i = 0; i < m; i++) {
-      result.push(this.flowFunction(i));
-    }
-
-    return result;
-  }
-
   flowFunction(m) {
-    return this.getBigSum() + m * (this.sumP() - this.sumE());
+    return this.sumA() + m * (this.sumP() - this.sumE());
   }
 
   getBalanceColor() {
@@ -233,7 +194,7 @@ export class DashboardComponent implements OnInit {
     return this.sumP() - this.sumE();
   }
 
-  getBancruptcy() {
+  getBankruptcy() {
     for (let i = 0; ; i++) {
       if (this.flowFunction(i) < 0) {
         return i;
@@ -249,72 +210,39 @@ export class DashboardComponent implements OnInit {
     return this.selectedBaseCurrency;
   }
 
-  getBigSum() {
-    return this.sumA();
-  }
+  getForexRateInBaseCurrency(currency: string): number {
+    if (!this.forex) return 0;
 
-  plotFlow() {
-    let canvas = document.getElementById('flow-canvas') as HTMLCanvasElement;
+    if (this.selectedBaseCurrency === 'PLN') {
+      const rates = {
+        USD: this.forex.usd,
+        EUR: this.forex.eur,
+        GOLD: this.forex.gold,
+      };
 
-    if (null == canvas || !canvas.getContext) return;
+      return rates[currency] || 1;
+    } else if (this.selectedBaseCurrency === 'USD') {
+      const rates = {
+        PLN: 1 / this.forex.usd,
+        EUR: this.forex.eur / this.forex.usd,
+        GOLD: this.forex.gold / this.forex.usd,
+      };
 
-    var axes: Axes = {
-      x0: 10, // x0 pixels from left to x=0
-      y0: 180, // y0 pixels from top to y=0
-      xscale: 1, // pixels from x = 0 to x = 1
-      yscale: 0.0005,
-      doNegativeX: false,
-    };
+      return rates[currency] || 1;
+    } else if (this.selectedBaseCurrency === 'EUR') {
+      const rates = {
+        PLN: 1 / this.forex.eur,
+        USD: this.forex.usd / this.forex.eur,
+        GOLD: this.forex.gold / this.forex.eur,
+      };
 
-    var ctx = canvas.getContext('2d');
-
-    this.showAxes(ctx, axes);
-    this.funGraph(ctx, axes, 'rgb(11,153,11)', 1);
-  }
-
-  funGraph(ctx, axes, color, thick) {
-    let xx;
-    let yy;
-    let dx = 20;
-    let x0 = axes.x0;
-    let y0 = axes.y0;
-    let xscale = axes.xscale;
-    let yscale = axes.yscale;
-
-    var iMax = Math.round((ctx.canvas.width - x0) / dx);
-    var iMin = 0;
-
-    ctx.beginPath();
-    ctx.lineWidth = thick;
-    ctx.strokeStyle = color;
-
-    for (var m = 0; m <= 12; m++) {
-      xx = dx * m;
-      yy = yscale * this.flowFunction(m);
-
-      if (m == iMin) {
-        ctx.moveTo(x0 + xx, y0 - yy);
-      } else {
-        ctx.lineTo(x0 + xx, y0 - yy);
-      }
+      return rates[currency] || 1;
     }
 
-    ctx.stroke();
+    return 0;
   }
 
-  showAxes(ctx, axes) {
-    var x0 = axes.x0;
-    var y0 = axes.y0;
-    const width = ctx.canvas.width;
-    const height = ctx.canvas.height;
-    var xmin = 0;
-
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgb(128,128,128)';
-    ctx.moveTo(xmin, y0);
-    ctx.lineTo(width, y0); // X axis
-    ctx.moveTo(x0, 0);
-    ctx.lineTo(x0, height); // Y axis
-    ctx.stroke();
+  shouldShowCurrency(currency: string): boolean {
+    return currency !== this.selectedBaseCurrency;
   }
 }

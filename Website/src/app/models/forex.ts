@@ -4,5 +4,6 @@ export interface Forex {
   eur: number;
   gold: number;
 
+  // view model
   online: boolean;
 }
