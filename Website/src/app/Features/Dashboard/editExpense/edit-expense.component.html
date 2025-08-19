@@ -1,4 +1,4 @@
-<div *ngIf="isVisible">
+<div *ngIf="isVisible" class="edit-border p-3 m-2">
     <div class="form-group">
         <label>Nazwa</label>
         <input type="text" class="form-control" [(ngModel)]="expense.name"/>
@@ -11,8 +11,8 @@
         <label>Waluta</label>
         <input type="text" class="form-control" [(ngModel)]="expense.currency"/>
     </div> 
-    <div class="mt-3">
-        <button class="btn btn-primary mr-2" (click)="addOrUpdate()">OK</button>
-        <button class="btn btn-danger" (click)="onDelete()">Usuń</button>
+    <div class="mt-3 d-flex justify-content-center">
+        <button class="btn btn-danger mr-3" (click)="onDelete()">Usuń</button>
+        <button class="btn btn-primary mr-3" (click)="addOrUpdate()">OK</button>
     </div>
 </div>
