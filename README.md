@@ -15,14 +15,17 @@ you can see your monthly balance and where will you be in $m$ months.
 There is a simple diagram showing the next 24 months.
 
 Assets, Profits and Expenses can be provided in PLN, EUR, USD or GOZ (ounce of gold).
-They all can be recalculated to PLN, EUR or USD by taking current (on-line) Forex ratios.
+They all can be recalculated to PLN, EUR or USD by taking current (on-line) Forex ratios from European Central Bank updated on working days.
 
 Assets have Yearly Interest Rate associated with them, so you can automatically see your interest profits each month. It does not take into account accumulation (yet).
 
+If your monthly balance is in the red you will see when will the bankruptcy happen.
+On the other hand when in the black app will tell you when will you become a millionaire!
+
 ## Stack
 
-Angular 13
-Dotnet 6
+Angular 13 |
+Dotnet 6 |
 MS SQL
 
 ## Development server
@@ -30,11 +33,3 @@ MS SQL
 Angular run `ng serve` for a dev server. Navigate to `http://localhost:4300/`.
 For backend `dotnet run` in Api Project directory
 Remember to update-database via dotnet-ef tools
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.

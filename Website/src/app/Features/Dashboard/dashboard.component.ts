@@ -204,6 +204,29 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  getMillionaireTime() {
+    const millionTarget = 1000000; // 1 million in base currency
+
+    // Check if already a millionaire
+    if (this.flowFunction(0) >= millionTarget) {
+      return 0; // Already a millionaire
+    }
+
+    for (let i = 1; i <= 240; i++) {
+      // Max 20 years
+      if (this.flowFunction(i) >= millionTarget) {
+        return i;
+      }
+    }
+
+    return null; // Never becomes millionaire
+  }
+
+  isAlreadyMillionaire() {
+    const millionTarget = 1000000;
+    return this.sumA() >= millionTarget;
+  }
+
   onBaseCurrencyChange() {
     this.getFlow();
   }

@@ -141,14 +141,20 @@
                 &sum;S<sub>i</sub> + m * ( &sum;P<sub>i</sub> - &sum;W<sub>i</sub> )
             </strong>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <strong>Bilans miesięczny: <span [ngClass]="getBalanceColor()">{{ getBalance() | number: '3.0-0'
-                    }}</span>&nbsp;{{ currentBaseCurrency }}</strong>
+            <strong>BILANS MIESIĘCZNY: <span [ngClass]="getBalanceColor()">
+                    {{ getBalance() | number: '3.0-0'
+                    }}&nbsp;{{ currentBaseCurrency }}</span></strong>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBankruptcy() }}</strong>
+            <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBankruptcy() }} 💸</strong>
+            <strong *ngIf="getBalance() > 0 && isAlreadyMillionaire()">JUŻ JESTEŚ MILIONEREM! 👑</strong>
+            <strong *ngIf="getBalance() > 0 && !isAlreadyMillionaire() && getMillionaireTime()">Zostaniesz milionerem
+                za: {{ getMillionaireTime() }} miesięcy! 💰</strong>
+            <strong *ngIf="getBalance() > 0 && !isAlreadyMillionaire() && !getMillionaireTime()">W tym tempie nie
+                zostaniesz milionerem w ciągu 20 lat 😅</strong>
         </div>
+
         <br />
-        <!-- <canvas id="flow-canvas" width="600" height="200"></canvas> -->
+
         <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
     </div>
-
 </div>
