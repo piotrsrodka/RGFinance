@@ -1,7 +1,8 @@
-namespace RGFinance.FlowFeature
+namespace Database.Entities
 {
     public enum CurrencyType
     {
+        Undefined = 0,
         PLN,
         USD,
         EUR,

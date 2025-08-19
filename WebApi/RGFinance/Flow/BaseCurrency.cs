@@ -1,3 +1,5 @@
+using Database.Entities;
+
 namespace RGFinance.FlowFeature
 {
     // Alias for base currencies (subset of CurrencyType)

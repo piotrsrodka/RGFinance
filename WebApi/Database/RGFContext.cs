@@ -25,6 +25,14 @@ namespace Database
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder
+               .Entity<ValueObject>()
+               .Property(c => c.Currency)
+               .HasConversion(
+                   s => s.ToString(),
+                   s => (CurrencyType)Enum.Parse(typeof(CurrencyType), s));
+
+
+            builder
                 .Entity<Asset>()
                 .Property(c => c.InterestRate)
                 .HasConversion(

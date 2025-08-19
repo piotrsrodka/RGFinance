@@ -1,6 +1,4 @@
 using Database;
-using System.Xml;
-using System.Xml.Linq;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -106,12 +104,14 @@ namespace RGFinance.FlowFeature
 
         private static decimal GetValueInPLN(ValueObject valueObject, Forex forex)
         {
-            return valueObject.Currency.ToUpper() switch
+            var currencyType = valueObject.Currency;
+
+            return currencyType switch
             {
-                "PLN" => valueObject.Value,
-                "EUR" => valueObject.Value * forex.Eur,
-                "USD" => valueObject.Value * forex.Usd,
-                "GOZ" => valueObject.Value * forex.Gold,
+                CurrencyType.PLN => valueObject.Value,
+                CurrencyType.EUR => valueObject.Value * forex.Eur,
+                CurrencyType.USD => valueObject.Value * forex.Usd,
+                CurrencyType.GOZ => valueObject.Value * forex.Gold,
                 _ => valueObject.Value
             };
         }
