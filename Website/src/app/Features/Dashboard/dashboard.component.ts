@@ -9,6 +9,7 @@ import { DashboardService } from './dashboard.service';
 import { ValueObject } from '../../models/valueObject';
 import { PlotLocalService } from '../Plot/plot.local.service';
 import { Currency } from '../../models/currency';
+import { AssetType } from '../../models/assetType';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,9 +28,10 @@ export class DashboardComponent implements OnInit {
         values: [],
         labels: [],
         text: [],
+        hovertemplate: [],
         type: 'pie',
         textinfo: 'text+percent',
-        hoverinfo: 'label+value+percent',
+        hoverinfo: 'none',
         domain: {
           x: [0, 0.8],
           y: [0, 1],
@@ -92,6 +94,17 @@ export class DashboardComponent implements OnInit {
   isBaseCurrency = false;
   selectedBaseCurrency = Currency.PLN;
   Currency = Currency; // for template access
+  AssetType = AssetType; // for template access
+
+  // Filtry dla pie-chart (checkboxy)
+  assetTypeFilters = {
+    [AssetType.Cash]: true,
+    [AssetType.Stocks]: true,
+    [AssetType.Metals]: true,
+    [AssetType.RealEstate]: true,
+    [AssetType.Crypto]: true,
+    [AssetType.Other]: true,
+  };
 
   constructor(
     private flowService: DashboardService,
@@ -130,6 +143,13 @@ export class DashboardComponent implements OnInit {
       .subscribe((response) => {
         this.flow = response;
 
+        // Convert AssetType strings to numbers
+        this.flow.assets.forEach(asset => {
+          if (typeof asset.assetType === 'string') {
+            asset.assetType = (AssetType as any)[asset.assetType] || AssetType.Undefined;
+          }
+        });
+
         this.graph = this.plotService.getPlot(
           this.months,
           this.sumA(),
@@ -143,29 +163,43 @@ export class DashboardComponent implements OnInit {
   }
 
   updatePieChart() {
-    if (this.flow.assets.length === 0) {
+    // Filtruj assety według zaznaczonych checkboxów
+    const filteredAssets = this.flow.assets.filter(
+      (a) => this.assetTypeFilters[a.assetType]
+    );
+
+    if (filteredAssets.length === 0) {
       this.pieChart.data[0].values = [];
       this.pieChart.data[0].labels = [];
       this.pieChart.data[0].text = [];
+      this.pieChart.data[0].hovertemplate = [];
       return;
     }
 
-    // const total = this.sumA();
-
-    this.pieChart.data[0].values = this.flow.assets.map(
+    this.pieChart.data[0].values = filteredAssets.map(
       (a) => a.currentCurrencyValue
     );
 
     // Labels (w legendzie): nazwa + wartość
-    this.pieChart.data[0].labels = this.flow.assets.map((a) => {
+    this.pieChart.data[0].labels = filteredAssets.map((a) => {
       const value = a.currentCurrencyValue.toFixed(0);
       return `${a.name}: ${value} ${this.selectedBaseCurrency}`;
     });
 
     // Text (na wykresie): tylko nazwa
-    this.pieChart.data[0].text = this.flow.assets.map((a) => a.name);
+    this.pieChart.data[0].text = filteredAssets.map((a) => a.name);
+
+    // Hover template: nazwa + wartość + waluta
+    this.pieChart.data[0].hovertemplate = filteredAssets.map((a) => {
+      const value = a.currentCurrencyValue.toFixed(0);
+      return `${a.name}<br>${value} ${this.selectedBaseCurrency}<extra></extra>`;
+    });
 
     this.pieChart.layout.title = 'Skład portfela';
+  }
+
+  onAssetTypeFilterChange() {
+    this.updatePieChart();
   }
 
   // (${total.toFixed(0)} ${this.selectedBaseCurrency})
@@ -339,5 +373,49 @@ export class DashboardComponent implements OnInit {
 
   shouldShowCurrency(currency: string): boolean {
     return currency !== this.selectedBaseCurrency;
+  }
+
+  getCryptoPrice(cryptoPricePln: number): number {
+    if (!this.forex) return 0;
+
+    // Crypto prices from backend are in PLN, convert to selected base currency
+    if (this.selectedBaseCurrency === Currency.PLN) {
+      return cryptoPricePln;
+    } else if (this.selectedBaseCurrency === Currency.USD) {
+      return cryptoPricePln / this.forex.usd;
+    } else if (this.selectedBaseCurrency === Currency.EUR) {
+      return cryptoPricePln / this.forex.eur;
+    }
+
+    return cryptoPricePln;
+  }
+
+  getAssetIcon(assetType: number): string {
+    const AssetType = {
+      Undefined: 0,
+      Cash: 1,
+      Stocks: 2,
+      Metals: 3,
+      RealEstate: 4,
+      Crypto: 5,
+      Other: 99,
+    };
+
+    switch (assetType) {
+      case AssetType.Cash:
+        return '💵';
+      case AssetType.Stocks:
+        return '📈';
+      case AssetType.Metals:
+        return '🟨';
+      case AssetType.RealEstate:
+        return '🏠';
+      case AssetType.Crypto:
+        return '🪙';
+      case AssetType.Other:
+        return '💼';
+      default:
+        return '❓';
+    }
   }
 }

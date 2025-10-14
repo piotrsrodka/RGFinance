@@ -2,6 +2,7 @@ import { Expense } from '../models/expense';
 import { Profit } from '../models/profit';
 import { Rate } from '../models/rate';
 import { Asset } from '../models/asset';
+import { AssetType } from '../models/assetType';
 
 export default class Utils {
   public static getClearAsset(): Asset {
@@ -10,6 +11,7 @@ export default class Utils {
       currency: 'PLN',
       interest: 0,
       interestRate: Rate.Yearly,
+      assetType: AssetType.Undefined,
       name: '',
       tags: '',
       value: 0,

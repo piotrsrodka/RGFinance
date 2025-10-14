@@ -1,8 +1,7 @@
 using Database;
+using System.Xml.Linq;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace RGFinance.FlowFeature
 {
@@ -40,30 +39,10 @@ namespace RGFinance.FlowFeature
         }
 
         public async Task<Forex> GetForexFromApi()
-        {
-            // From StackOverflow - I have no idea how and why it works ;)
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
-
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
-            nsmgr.AddNamespace("gesmes", "http://www.gesmes.org/xml/2002-08-01");
-
-            // add another namespace alias for the *default* namespace
-            nsmgr.AddNamespace("default", "http://www.ecb.int/vocabulary/2002-08-01/eurofxref");
-
-            // *USE* the default namespace for those nodes that don't have an explicit
-            // XML namespace alias in your XML document
-            XmlNodeList nodes = doc.SelectNodes("gesmes:Envelope/default:Cube", nsmgr);
-
-            // Time
-            XmlNode timeNode = nodes[0].SelectSingleNode("default:Cube", nsmgr);
-            string time = timeNode.Attributes["time"].Value;
-
-            /* ALTERNATIVE */
+        {         
             XDocument xdoc = XDocument.Load("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
 
-            List<CurrencyRate>? res2 = xdoc.Descendants()
+            List<CurrencyRate>? ecb = xdoc.Descendants()
                 .Where(x => x.Name.LocalName == "Cube" && x.Attribute("currency") != null)
                 .Select(x => new CurrencyRate
                 {
@@ -72,9 +51,15 @@ namespace RGFinance.FlowFeature
                 })
                 .ToList();
 
-            var usdeur = res2.Single(cr => cr.Currency == "USD").Rate;
-            var plneur = res2.Single(cr => cr.Currency == "PLN").Rate;
-            var plnusd = plneur / usdeur;
+            var times = xdoc.DescendantNodes().OfType<XElement>()
+                .Where(e => e.Name.LocalName == "Cube" && e.Attribute("time") != null)
+                .ToList();
+
+            string time2 = times.First().Attribute("time")!.Value;
+
+            decimal usdeur = ecb.Single(cr => cr.Currency == "USD").Rate;
+            decimal plneur = ecb.Single(cr => cr.Currency == "PLN").Rate;
+            decimal plnusd = plneur / usdeur;
 
             // GOLD
             var goldJsonString = await new HttpClient().GetStringAsync("https://data-asg.goldprice.org/dbXRates/USD");
@@ -85,12 +70,18 @@ namespace RGFinance.FlowFeature
             decimal goldPriceUsd = decimal.Parse(goldPriceString, System.Globalization.NumberStyles.Number);
             decimal goldPricePln = goldPriceUsd * plnusd;
 
+            // BTC & ETH
+            var btcPriceUsd = await this.GetBtcPrice("90");
+            var ethPriceUsd = await this.GetBtcPrice("80");
+
             var forex = new Forex
             {
-                Time = time,
+                Time = time2,
                 Usd = plnusd,
                 Eur = plneur,
                 Gold = goldPricePln,
+                Btc = btcPriceUsd * plnusd,
+                Eth = ethPriceUsd * plnusd
             };
 
             var dbForexWithCurrentTime = await this.context.Forexes
@@ -103,6 +94,19 @@ namespace RGFinance.FlowFeature
             }
 
             return forex;
+        }
+
+        private async Task<decimal> GetBtcPrice(string id)
+        {
+            var client = new HttpClient();
+            string response = await client.GetStringAsync($"https://api.coinlore.net/api/ticker/?id={id}");
+            response = response.TrimStart('[').TrimEnd(']');
+            var json = System.Text.Json.JsonDocument.Parse(response);
+            var string_result = json.RootElement.GetProperty("price_usd").GetString();
+            var formatProvider = new System.Globalization.CultureInfo("en-US");
+            var result = decimal.Parse(string_result!, System.Globalization.NumberStyles.Any, formatProvider);
+
+            return result;
         }
     }
 }

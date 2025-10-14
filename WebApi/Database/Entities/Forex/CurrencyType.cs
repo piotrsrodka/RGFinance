@@ -6,6 +6,8 @@ namespace Database.Entities
         PLN,
         USD,
         EUR,
-        GOZ  // Gold ounce
+        GOZ,  // Gold ounce
+        BTC,  // Bitcoin
+        ETH   // Ethereum
     }
 }

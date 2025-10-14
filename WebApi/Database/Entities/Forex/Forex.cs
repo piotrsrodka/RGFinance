@@ -8,6 +8,8 @@ namespace Database.Entities
         public decimal Usd { get; set; }
         public decimal Eur { get; set; }
         public decimal Gold { get; set; }
+        public decimal Btc { get; set; }
+        public decimal Eth { get; set; }
 
         [NotMapped]
         public bool Online { get; set; }

@@ -112,6 +112,8 @@ namespace RGFinance.FlowFeature
                 CurrencyType.EUR => valueObject.Value * forex.Eur,
                 CurrencyType.USD => valueObject.Value * forex.Usd,
                 CurrencyType.GOZ => valueObject.Value * forex.Gold,
+                CurrencyType.BTC => valueObject.Value * forex.Btc,
+                CurrencyType.ETH => valueObject.Value * forex.Eth,
                 _ => valueObject.Value
             };
         }
