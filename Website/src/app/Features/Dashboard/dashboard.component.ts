@@ -21,6 +21,30 @@ export class DashboardComponent implements OnInit {
     layout: null,
   };
 
+  pieChart: any = {
+    data: [
+      {
+        values: [],
+        labels: [],
+        text: [],
+        type: 'pie',
+        textinfo: 'text+percent',
+        hoverinfo: 'label+value+percent',
+      },
+    ],
+    layout: {
+      title: 'Skład portfela',
+      showlegend: true,
+      legend: {
+        orientation: 'v',
+        x: 1,
+        xanchor: 'right',
+        y: 0.5,
+        yanchor: 'middle',
+      },
+    },
+  };
+
   months = 24;
 
   userId = 1;
@@ -103,8 +127,38 @@ export class DashboardComponent implements OnInit {
           this.sumE(),
           this.selectedBaseCurrency
         );
+
+        this.updatePieChart();
       });
   }
+
+  updatePieChart() {
+    if (this.flow.assets.length === 0) {
+      this.pieChart.data[0].values = [];
+      this.pieChart.data[0].labels = [];
+      this.pieChart.data[0].text = [];
+      return;
+    }
+
+    // const total = this.sumA();
+
+    this.pieChart.data[0].values = this.flow.assets.map(
+      (a) => a.currentCurrencyValue
+    );
+
+    // Labels (w legendzie): nazwa + wartość
+    this.pieChart.data[0].labels = this.flow.assets.map((a) => {
+      const value = a.currentCurrencyValue.toFixed(0);
+      return `${a.name}: ${value} ${this.selectedBaseCurrency}`;
+    });
+
+    // Text (na wykresie): tylko nazwa
+    this.pieChart.data[0].text = this.flow.assets.map((a) => a.name);
+
+    this.pieChart.layout.title = 'Skład portfela';
+  }
+
+  // (${total.toFixed(0)} ${this.selectedBaseCurrency})
 
   addOrUpdateAsset(asset: Asset) {
     if (this.isAddingAsset) {
