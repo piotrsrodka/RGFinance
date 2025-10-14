@@ -30,6 +30,10 @@ export class DashboardComponent implements OnInit {
         type: 'pie',
         textinfo: 'text+percent',
         hoverinfo: 'label+value+percent',
+        domain: {
+          x: [0, 0.8],
+          y: [0, 1],
+        },
       },
     ],
     layout: {
@@ -37,10 +41,16 @@ export class DashboardComponent implements OnInit {
       showlegend: true,
       legend: {
         orientation: 'v',
-        x: 1,
+        x: 1.15,
         xanchor: 'right',
-        y: 0.5,
-        yanchor: 'middle',
+        y: 0.1,
+        yanchor: 'top',
+      },
+      margin: {
+        l: 10,
+        r: 50,
+        t: 60,
+        b: 50,
       },
     },
   };

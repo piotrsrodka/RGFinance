@@ -135,10 +135,6 @@
     </div>
 
     <div class="diagram">
-
-        <plotly-plot [data]="pieChart.data" [layout]="pieChart.layout"></plotly-plot>
-        <br />
-        <br />
         <div class="">
             <strong>&fnof;(<input class="month-input" [(ngModel)]="months" type="number" (change)="getFlow()" />, S, P,
                 W) =
@@ -156,10 +152,17 @@
             <strong *ngIf="getBalance() > 0 && !isAlreadyMillionaire() && !getMillionaireTime()">W tym tempie nie
                 zostaniesz milionerem w ciągu 20 lat 😅</strong>
         </div>
-        <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
 
         <br />
-        <br />
+
+        <div class="row">
+            <div class="col-6">
+                <plotly-plot [data]="pieChart.data" [layout]="pieChart.layout"></plotly-plot>
+            </div>
+            <div class="col-6">
+                <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+            </div>
+        </div>
 
     </div>
 </div>
