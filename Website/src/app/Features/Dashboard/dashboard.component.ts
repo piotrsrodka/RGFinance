@@ -57,6 +57,41 @@ export class DashboardComponent implements OnInit {
     },
   };
 
+  pieChartByType: any = {
+    data: [
+      {
+        values: [],
+        labels: [],
+        text: [],
+        hovertemplate: [],
+        type: 'pie',
+        textinfo: 'text+percent',
+        hoverinfo: 'none',
+        domain: {
+          x: [0, 0.8],
+          y: [0, 1],
+        },
+      },
+    ],
+    layout: {
+      title: 'Skład portfela',
+      showlegend: true,
+      legend: {
+        orientation: 'v',
+        x: 1.15,
+        xanchor: 'right',
+        y: 0.1,
+        yanchor: 'top',
+      },
+      margin: {
+        l: 10,
+        r: 50,
+        t: 60,
+        b: 50,
+      },
+    },
+  };
+
   months = 24;
 
   userId = 1;
@@ -137,6 +172,28 @@ export class DashboardComponent implements OnInit {
     return value;
   }
 
+  getFormattedValue(valueObject: ValueObject): string {
+    const value = this.getValue(valueObject);
+    const currency = this.isBaseCurrency
+      ? this.currentBaseCurrency
+      : valueObject.currency;
+
+    // For crypto currencies, show more decimal places
+    if (currency === 'BTC' || currency === 'ETH') {
+      return value.toFixed(4);
+    }
+
+    if (currency === 'GOZ') {
+      return value.toFixed(2);
+    }
+
+    // For regular currencies, show whole numbers with thousand separators
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  }
+
   getFlow() {
     this.flowService
       .Get(this.userId, this.selectedBaseCurrency)
@@ -144,9 +201,10 @@ export class DashboardComponent implements OnInit {
         this.flow = response;
 
         // Convert AssetType strings to numbers
-        this.flow.assets.forEach(asset => {
+        this.flow.assets.forEach((asset) => {
           if (typeof asset.assetType === 'string') {
-            asset.assetType = (AssetType as any)[asset.assetType] || AssetType.Undefined;
+            asset.assetType =
+              (AssetType as any)[asset.assetType] || AssetType.Undefined;
           }
         });
 
@@ -159,6 +217,7 @@ export class DashboardComponent implements OnInit {
         );
 
         this.updatePieChart();
+        this.updatePieChartByType();
       });
   }
 
@@ -182,7 +241,10 @@ export class DashboardComponent implements OnInit {
 
     // Labels (w legendzie): nazwa + wartość
     this.pieChart.data[0].labels = filteredAssets.map((a) => {
-      const value = a.currentCurrencyValue.toFixed(0);
+      const value = a.currentCurrencyValue.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
       return `${a.name}: ${value} ${this.selectedBaseCurrency}`;
     });
 
@@ -191,7 +253,10 @@ export class DashboardComponent implements OnInit {
 
     // Hover template: nazwa + wartość + waluta
     this.pieChart.data[0].hovertemplate = filteredAssets.map((a) => {
-      const value = a.currentCurrencyValue.toFixed(0);
+      const value = a.currentCurrencyValue.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
       return `${a.name}<br>${value} ${this.selectedBaseCurrency}<extra></extra>`;
     });
 
@@ -200,6 +265,78 @@ export class DashboardComponent implements OnInit {
 
   onAssetTypeFilterChange() {
     this.updatePieChart();
+    this.updatePieChartByType();
+  }
+
+  updatePieChartByType() {
+    // Filtruj assety według zaznaczonych checkboxów
+    const filteredAssets = this.flow.assets.filter(
+      (a) => this.assetTypeFilters[a.assetType]
+    );
+
+    // Grupuj assety według typu
+    const typeGroups = new Map<
+      number,
+      { name: string; icon: string; total: number }
+    >();
+
+    const typeNames = {
+      [AssetType.Cash]: 'Waluta',
+      [AssetType.Stocks]: 'Akcje',
+      [AssetType.Metals]: 'Kruszce',
+      [AssetType.RealEstate]: 'Nieruchomości',
+      [AssetType.Crypto]: 'Kryptowaluty',
+      [AssetType.Other]: 'Inne',
+    };
+
+    // Zsumuj wartości dla każdego typu
+    filteredAssets.forEach((asset) => {
+      if (!typeGroups.has(asset.assetType)) {
+        typeGroups.set(asset.assetType, {
+          name: typeNames[asset.assetType] || 'Nieokreślone',
+          icon: this.getAssetIcon(asset.assetType),
+          total: 0,
+        });
+      }
+      const group = typeGroups.get(asset.assetType)!;
+      group.total += asset.currentCurrencyValue;
+    });
+
+    // Przygotuj dane dla wykresu
+    const types = Array.from(typeGroups.values());
+
+    if (types.length === 0) {
+      this.pieChartByType.data[0].values = [];
+      this.pieChartByType.data[0].labels = [];
+      this.pieChartByType.data[0].text = [];
+      this.pieChartByType.data[0].hovertemplate = [];
+      return;
+    }
+
+    this.pieChartByType.data[0].values = types.map((t) => t.total);
+
+    // Labels (w legendzie): ikonka + nazwa + wartość
+    this.pieChartByType.data[0].labels = types.map((t) => {
+      const value = t.total.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+      return `${t.name}: ${value} ${this.selectedBaseCurrency}`;
+    });
+
+    // Text (na wykresie): ikonka + nazwa
+    this.pieChartByType.data[0].text = types.map((t) => `${t.name}`);
+
+    // Hover template
+    this.pieChartByType.data[0].hovertemplate = types.map((t) => {
+      const value = t.total.toLocaleString('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      });
+      return `${t.name}<br>${value} ${this.selectedBaseCurrency}<extra></extra>`;
+    });
+
+    this.pieChartByType.layout.title = 'Skład portfela';
   }
 
   // (${total.toFixed(0)} ${this.selectedBaseCurrency})

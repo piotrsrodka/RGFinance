@@ -26,8 +26,23 @@ namespace Database
         {
             // Force separate tables instead of TPH (Table Per Hierarchy)
             builder.Entity<Asset>().ToTable("Assets");
-            builder.Entity<Profit>().ToTable("Profits"); 
+            builder.Entity<Profit>().ToTable("Profits");
             builder.Entity<Expense>().ToTable("Expenses");
+
+            // Configure decimal precision for Value property (28,8 to handle both millions and crypto fractions)
+            builder.Entity<Asset>().Property(p => p.Value).HasPrecision(28, 8);
+            builder.Entity<Profit>().Property(p => p.Value).HasPrecision(28, 8);
+            builder.Entity<Expense>().Property(p => p.Value).HasPrecision(28, 8);
+
+            // Configure decimal precision for Interest property
+            builder.Entity<Asset>().Property(p => p.Interest).HasPrecision(18, 2);
+
+            // Configure decimal precision for Forex properties (28,8 for crypto prices)
+            builder.Entity<Forex>().Property(p => p.Usd).HasPrecision(28, 8);
+            builder.Entity<Forex>().Property(p => p.Eur).HasPrecision(28, 8);
+            builder.Entity<Forex>().Property(p => p.Gold).HasPrecision(28, 8);
+            builder.Entity<Forex>().Property(p => p.Btc).HasPrecision(28, 8);
+            builder.Entity<Forex>().Property(p => p.Eth).HasPrecision(28, 8);
 
             // Configure Currency enum conversion for each entity
             builder

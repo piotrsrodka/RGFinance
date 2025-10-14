@@ -1,4 +1,4 @@
-<div class="container wide">
+<div class="container wide mb-5">
     <h1>Dashboard - finance</h1>
 
     <div class="d-flex">
@@ -36,6 +36,7 @@
             <span class="slider round"></span>
         </label>
     </div>
+
     <span *ngIf="forex.online">Dane online z <strong title="European Central Bank">ECB</strong>
         {{forex.time}}</span>
     <span *ngIf="!forex.online">Dane off-line historyczne z {{forex.time}}</span>
@@ -58,7 +59,7 @@
             <div *ngFor="let asset of flow.assets" (click)="asset.isEditing = true" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ getAssetIcon(asset.assetType) }} {{ asset.name }}</div>
-                    <div class="col-3 d-flex justify-content-end">{{ getValue(asset) | number: '3.0-0' }}&nbsp;{{
+                    <div class="col-3 d-flex justify-content-end">{{ getFormattedValue(asset) }}&nbsp;{{
                         isBaseCurrency
                         ? currentBaseCurrency
                         : asset.currency
@@ -90,7 +91,7 @@
             <div *ngFor="let profit of flow.profits" (click)="onProfitClicked(profit)" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ profit.name }}</div>
-                    <div class="col-3 d-flex justify-content-end">{{ getValue(profit) | number: '3.0-0' }}&nbsp;{{
+                    <div class="col-3 d-flex justify-content-end">{{ getFormattedValue(profit) }}&nbsp;{{
                         isBaseCurrency
                         ? currentBaseCurrency :profit.currency
                         }}&nbsp;</div>
@@ -126,7 +127,7 @@
             <div *ngFor="let expense of flow.expenses" (click)="expense.isEditing = true" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ expense.name }}</div>
-                    <div class="col-3 d-flex justify-content-end">{{ getValue(expense) | number: '3.0-0' }}&nbsp;{{
+                    <div class="col-3 d-flex justify-content-end">{{ getFormattedValue(expense) }}&nbsp;{{
                         isBaseCurrency ? currentBaseCurrency :expense.currency
                         }}&nbsp;</div>
                 </div>
@@ -140,7 +141,7 @@
         </div>
     </div>
 
-    <div class="diagram">
+    <div class="diagram mb-5">
         <div class="">
             <strong>&fnof;(<input class="month-input" [(ngModel)]="months" type="number" (change)="getFlow()" />, S, P,
                 W) =
@@ -207,12 +208,19 @@
 
             </div>
         </div>
+
         <div class="row align-items-start">
             <div class="col-6 d-flex flex-column">
                 <plotly-plot [data]="pieChart.data" [layout]="pieChart.layout"></plotly-plot>
             </div>
             <div class="col-6 d-flex flex-column">
                 <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+            </div>
+        </div>
+
+        <div class="row align-items-start mt-4 mb-5">
+            <div class="col-6 d-flex flex-column">
+                <plotly-plot [data]="pieChartByType.data" [layout]="pieChartByType.layout"></plotly-plot>
             </div>
         </div>
     </div>
