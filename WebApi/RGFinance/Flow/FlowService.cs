@@ -145,7 +145,7 @@ namespace RGFinance.FlowFeature
                         Id = -1,
                         Name = asset.Name + " %%",
                         Rate = Rate.Monthly,
-                        Value = Math.Round(grossValue - (0.19m * grossValue), 2),
+                        Value = Math.Round(grossValue - (0.19m * grossValue), 8),
                         IsInterestProfit = true,
                     };
 
