@@ -23,6 +23,14 @@ export class EditAssetComponent implements OnInit {
     this.save.emit();
   }
 
+  hasStockTicker(asset: Asset): boolean {
+    return (
+      asset.assetType === AssetType.Stocks &&
+      asset.ticker &&
+      asset.ticker.trim().length > 0
+    );
+  }
+
   onDelete() {
     this.delete.emit();
   }

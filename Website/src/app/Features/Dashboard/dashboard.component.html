@@ -73,9 +73,7 @@
                 <div class="row">
                     <div class="col-8">{{ getAssetIcon(asset.assetType) }} {{ asset.name }}</div>
                     <div class="col-3 d-flex justify-content-end">{{ getFormattedValue(asset) }}&nbsp;{{
-                        isBaseCurrency
-                        ? currentBaseCurrency
-                        : asset.currency
+                        getCurrency(asset)
                         }}&nbsp;</div>
                     <div class="col-1 float-right">{{ asset.interest }}</div>
                 </div>

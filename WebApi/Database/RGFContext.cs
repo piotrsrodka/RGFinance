@@ -22,6 +22,9 @@ namespace Database
         /* Forex */
         public DbSet<Forex> Forexes { get; set; } = null!;
 
+        /* Stocks */
+        public DbSet<StockPriceCache> StockPriceCache { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             // Force separate tables instead of TPH (Table Per Hierarchy)
@@ -43,6 +46,10 @@ namespace Database
             builder.Entity<Forex>().Property(p => p.Gold).HasPrecision(28, 8);
             builder.Entity<Forex>().Property(p => p.Btc).HasPrecision(28, 8);
             builder.Entity<Forex>().Property(p => p.Eth).HasPrecision(28, 8);
+
+            // Configure StockPriceCache
+            builder.Entity<StockPriceCache>().Property(p => p.Price).HasPrecision(18, 4);
+            builder.Entity<StockPriceCache>().HasIndex(p => p.Ticker).IsUnique();
 
             // Configure Currency enum conversion for each entity
             builder

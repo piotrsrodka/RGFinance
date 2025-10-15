@@ -193,11 +193,25 @@ export class DashboardComponent implements OnInit {
     return value;
   }
 
-  getFormattedValue(valueObject: ValueObject): string {
-    const value = this.getValue(valueObject);
-    const currency = this.isBaseCurrency
+  getCurrency(valueObject: ValueObject): string {
+    if (
+      !this.isBaseCurrency &&
+      (valueObject as Asset) &&
+      (valueObject as Asset).assetType === AssetType.Stocks &&
+      (valueObject as Asset).ticker &&
+      (valueObject as Asset).ticker.trim().length > 0
+    ) {
+      return 'st.';
+    }
+
+    return this.isBaseCurrency
       ? this.currentBaseCurrency
       : valueObject.currency;
+  }
+
+  getFormattedValue(valueObject: ValueObject): string {
+    const value = this.getValue(valueObject);
+    const currency = this.getCurrency(valueObject);
 
     // For crypto currencies, show more decimal places
     if (currency === 'BTC' || currency === 'ETH' || currency === 'SOL') {

@@ -1,6 +1,7 @@
 using Database;
 using Microsoft.EntityFrameworkCore;
 using RGFinance.FlowFeature;
+using RGFinance.StocksFeature;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,11 @@ builder.Services.AddDbContext<RGFContext>(options => options.UseSqlServer(builde
 
 builder.Services.AddTransient<IFlowService, FlowService>();
 builder.Services.AddTransient<IForexService, ForexService>();
+
+// Stock price services
+builder.Services.AddHttpClient<PolygonStockPriceService>();
+builder.Services.AddHttpClient<YahooFinanceStockPriceService>();
+builder.Services.AddTransient<IStockPriceServiceFactory, StockPriceServiceFactory>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

@@ -7,19 +7,23 @@
         <label>Typ zasobu</label>
         <select class="form-control" [(ngModel)]="asset.assetType">
             <option [value]="AssetType.Undefined">-- Wybierz typ --</option>
-            <option [value]="AssetType.Cash">Waluta</option>
-            <option [value]="AssetType.Stocks">Akcje</option>
+            <option [value]="AssetType.Cash">💵 Waluta</option>
+            <option [value]="AssetType.Stocks">📈 Akcje</option>
             <option [value]="AssetType.Metals">🟨 Kruszce</option>
-            <option [value]="AssetType.RealEstate">Nieruchomości</option>
+            <option [value]="AssetType.RealEstate">🏠 Nieruchomości</option>
             <option [value]="AssetType.Crypto">🪙 Kryptowaluty</option>
-            <option [value]="AssetType.Other">Inne</option>
+            <option [value]="AssetType.Other">💼 Inne</option>
         </select>
     </div>
-    <div class="form-group">
-        <label>Kwota</label>
-        <input type="number" class="form-control" [(ngModel)]="asset.value" />
+    <div class="form-group" *ngIf="asset.assetType === AssetType.Stocks">
+        <label>Ticker (symbol akcji)</label>
+        <input type="text" class="form-control" [(ngModel)]="asset.ticker" placeholder="np. EOSE, AAPL" />
     </div>
     <div class="form-group">
+        <label>{{ hasStockTicker(asset) ? 'Liczba akcji' : 'Kwota' }}</label>
+        <input type="number" class="form-control" [(ngModel)]="asset.value" />
+    </div>
+    <div class="form-group" *ngIf="!hasStockTicker(asset)">
         <label>Waluta</label>
         <select class="form-control" [(ngModel)]="asset.currency">
             <option value="PLN">PLN</option>

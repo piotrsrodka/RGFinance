@@ -1,6 +1,7 @@
 using Database;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using RGFinance.StocksFeature;
 
 namespace RGFinance.FlowFeature
 {
@@ -8,11 +9,13 @@ namespace RGFinance.FlowFeature
     {
         private readonly RGFContext context;
         private readonly IForexService forexService;
+        private readonly IStockPriceServiceFactory stockPriceServiceFactory;
 
-        public FlowService(RGFContext context, IForexService forexService)
+        public FlowService(RGFContext context, IForexService forexService, IStockPriceServiceFactory stockPriceServiceFactory)
         {
             this.context = context;
             this.forexService = forexService;
+            this.stockPriceServiceFactory = stockPriceServiceFactory;
         }
 
         public async Task<Flow> GetFlowAsync(BaseCurrency baseCurrency = BaseCurrency.PLN)
@@ -21,6 +24,9 @@ namespace RGFinance.FlowFeature
 
             List<Asset> assets = await this.context.Assets
                 .ToListAsync();
+
+            // Update stock prices for assets with tickers
+            await UpdateStockPrices(assets, forex);
 
             List<Profit> profits = await this.context.Profits
                 .ToListAsync();
@@ -98,25 +104,35 @@ namespace RGFinance.FlowFeature
 
         private void ExchangeToCurrency(ValueObject valueObject, Forex forex, BaseCurrency baseCurrency)
         {
-            decimal valueInPLN = GetValueInPLN(valueObject, forex);
+            decimal valueInPLN = 0;
+
+            if (valueObject is Asset asset && asset.HasTicker)
+            {                
+                if (asset.CurrentCurrencyValue > 0)
+                {
+                    valueInPLN = GetValueInPLN(asset.CurrentCurrencyValue, asset.Currency, forex);
+                    valueObject.CurrentCurrencyValue = ConvertFromPLN(valueInPLN, forex, baseCurrency);
+                    return;
+                }
+            }
+
+            valueInPLN = GetValueInPLN(valueObject.Value, valueObject.Currency, forex);
             valueObject.CurrentCurrencyValue = ConvertFromPLN(valueInPLN, forex, baseCurrency);
         }
 
-        private static decimal GetValueInPLN(ValueObject valueObject, Forex forex)
+        private static decimal GetValueInPLN(decimal value, CurrencyType currencyType, Forex forex)
         {
-            var currencyType = valueObject.Currency;
-
             return currencyType switch
             {
-                CurrencyType.PLN => valueObject.Value,
-                CurrencyType.EUR => valueObject.Value * forex.Eur,
-                CurrencyType.USD => valueObject.Value * forex.Usd,
-                CurrencyType.GOZ => valueObject.Value * forex.Gold,
-                CurrencyType.BTC => valueObject.Value * forex.Btc,
-                CurrencyType.ETH => valueObject.Value * forex.Eth,
-                CurrencyType.SOL => valueObject.Value * forex.Sol,
-                CurrencyType.DOGE => valueObject.Value * forex.Doge,
-                _ => valueObject.Value
+                CurrencyType.PLN => value,
+                CurrencyType.EUR => value * forex.Eur,
+                CurrencyType.USD => value * forex.Usd,
+                CurrencyType.GOZ => value * forex.Gold,
+                CurrencyType.BTC => value * forex.Btc,
+                CurrencyType.ETH => value * forex.Eth,
+                CurrencyType.SOL => value * forex.Sol,
+                CurrencyType.DOGE => value * forex.Doge,
+                _ => value
             };
         }
 
@@ -156,6 +172,76 @@ namespace RGFinance.FlowFeature
             }
 
             return interestProfits;
+        }
+
+        private async Task UpdateStockPrices(List<Asset> assets, Forex forex)
+        {
+            foreach (var asset in assets)
+            {
+                // Only update stock assets that have a ticker
+                if (asset.AssetType == AssetType.Stocks && !string.IsNullOrEmpty(asset.Ticker))
+                {
+                    try
+                    {
+                        decimal pricePerShare;
+
+                        // Check cache first
+                        var cachedPrice = await this.context.StockPriceCache
+                            .FirstOrDefaultAsync(c => c.Ticker == asset.Ticker);
+
+                        if (cachedPrice != null && (DateTime.UtcNow - cachedPrice.LastUpdated).TotalHours < 24)
+                        {
+                            // Use cached price (less than 24 hours old)
+                            pricePerShare = cachedPrice.Price;
+                        }
+                        else
+                        {
+                            // Fetch from API
+                            var stockPriceService = this.stockPriceServiceFactory.GetService(asset.Ticker);
+                            pricePerShare = await stockPriceService.GetStockPrice(asset.Ticker);
+
+                            // Update or create cache entry
+                            if (cachedPrice != null)
+                            {
+                                cachedPrice.Price = pricePerShare;
+                                cachedPrice.LastUpdated = DateTime.UtcNow;
+                                this.context.StockPriceCache.Update(cachedPrice);
+                            }
+                            else
+                            {
+                                this.context.StockPriceCache.Add(new StockPriceCache
+                                {
+                                    Ticker = asset.Ticker,
+                                    Price = pricePerShare,
+                                    LastUpdated = DateTime.UtcNow
+                                });
+                            }
+                            await this.context.SaveChangesAsync();
+                        }
+
+                        // asset.Value contains quantity of shares
+                        // Calculate total value: quantity * price per share
+                        var totalValue = asset.Value * pricePerShare;
+
+                        // Store the calculated value in CurrentCurrencyValue
+                        if (asset.Ticker.Contains('.'))
+                        { // European stock
+                            asset.Currency = CurrencyType.EUR;
+                            asset.CurrentCurrencyValue = totalValue;
+                        }
+                        else
+                        {
+                            asset.Currency = CurrencyType.USD;
+                            asset.CurrentCurrencyValue = totalValue;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error but continue processing other assets
+                        Console.WriteLine($"Failed to update stock price for {asset.Ticker}: {ex.Message}");
+                    }
+                }
+            }
         }
     }
 }
