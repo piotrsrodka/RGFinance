@@ -157,6 +157,20 @@ namespace RGFinance.FlowFeature
                 {
                     var grossValue = asset.Value * asset.Interest / 1200.0m;
 
+                    if (asset.AssetType == AssetType.Stocks)
+                    {
+                        // For stocks, interest is calculated on CurrentCurrencyValue if available
+                        if (asset.CurrentCurrencyValue > 0)
+                        {
+                            grossValue = asset.CurrentCurrencyValue * asset.Interest / 1200.0m;
+                        }
+                        else
+                        {
+                            // If CurrentCurrencyValue is not set, skip interest calculation for stocks
+                            continue;
+                        }
+                    }
+
                     var interestProfit = new Profit
                     {
                         Currency = asset.Currency,
