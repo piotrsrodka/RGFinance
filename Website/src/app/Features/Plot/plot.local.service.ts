@@ -14,7 +14,8 @@ export class PlotLocalService {
           y: this.getY(m, a, p, e),
           type: 'scatter',
           mode: 'lines+markers+text',
-          marker: { color: 'black' },
+          marker: { color: 'white' },
+          line: { color: 'white' },
         },
       ],
       layout: {
@@ -24,16 +25,24 @@ export class PlotLocalService {
         xaxis: {
           title: {
             text: 'Miesiąc',
+            font: { color: 'white' },
           },
+          tickfont: { color: 'white' },
+          gridcolor: '#444',
         },
         yaxis: {
           title: {
             text: `Flow (kasa) ${baseCurrency}`,
+            font: { color: 'white' },
           },
+          tickfont: { color: 'white' },
+          gridcolor: '#444',
         },
         showlegend: false,
         pierdola: 12,
-        paper_bgcolor: 'white',
+        paper_bgcolor: 'black',
+        plot_bgcolor: 'black',
+        font: { color: 'white' },
       },
     };
   }

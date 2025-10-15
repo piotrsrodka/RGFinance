@@ -47,6 +47,7 @@ export class DashboardComponent implements OnInit {
         xanchor: 'right',
         y: 0.1,
         yanchor: 'top',
+        font: { color: 'greenyellow' },
       },
       margin: {
         l: 10,
@@ -54,6 +55,9 @@ export class DashboardComponent implements OnInit {
         t: 60,
         b: 50,
       },
+      paper_bgcolor: 'black',
+      plot_bgcolor: 'black',
+      font: { color: 'greenyellow' },
     },
   };
 
@@ -82,6 +86,7 @@ export class DashboardComponent implements OnInit {
         xanchor: 'right',
         y: 0.1,
         yanchor: 'top',
+        font: { color: 'greenyellow' },
       },
       margin: {
         l: 10,
@@ -89,6 +94,9 @@ export class DashboardComponent implements OnInit {
         t: 60,
         b: 50,
       },
+      paper_bgcolor: 'black',
+      plot_bgcolor: 'black',
+      font: { color: 'greenyellow' },
     },
   };
 
