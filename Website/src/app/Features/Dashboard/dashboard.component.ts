@@ -181,6 +181,16 @@ export class DashboardComponent implements OnInit {
     if (!profit.isInterestProfit) profit.isEditing = true;
   }
 
+  onAssetClicked(asset: Asset) {
+    // Close all other assets before opening this one
+    // This prevents keeping unsaved changes in other assets
+    this.flow.assets.forEach((a) => (a.isEditing = false));
+    asset.isEditing = true;
+
+    // Also close add mode
+    this.isAddingAsset = false;
+  }
+
   getValue(valueObject: ValueObject) {
     let value = this.isBaseCurrency
       ? valueObject.currentCurrencyValue
@@ -197,11 +207,11 @@ export class DashboardComponent implements OnInit {
     if (
       !this.isBaseCurrency &&
       (valueObject as Asset) &&
-      (valueObject as Asset).assetType === AssetType.Stocks &&
+      (valueObject as Asset).assetType == AssetType.Stocks &&
       (valueObject as Asset).ticker &&
       (valueObject as Asset).ticker.trim().length > 0
     ) {
-      return 'st.';
+      return 'Stck';
     }
 
     return this.isBaseCurrency
@@ -396,6 +406,20 @@ export class DashboardComponent implements OnInit {
   }
 
   // (${total.toFixed(0)} ${this.selectedBaseCurrency})
+
+  isVisible(asset: Asset): boolean {
+    return asset.isEditing;
+  }
+
+  onCancelAssetEdit(asset: Asset) {
+    asset.isEditing = false;
+
+    // If canceling while adding a new asset, reset the assetToAdd and close add mode
+    if (this.isAddingAsset && asset === this.assetToAdd) {
+      this.isAddingAsset = false;
+      this.assetToAdd = Utils.getClearAsset();
+    }
+  }
 
   addOrUpdateAsset(asset: Asset) {
     if (this.isAddingAsset) {

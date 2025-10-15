@@ -12,6 +12,7 @@ export class EditAssetComponent implements OnInit {
   @Input() isVisible = false;
   @Output() save: EventEmitter<any> = new EventEmitter();
   @Output() delete: EventEmitter<any> = new EventEmitter();
+  @Output() cancel: EventEmitter<any> = new EventEmitter();
 
   AssetType = AssetType; // for template access
 
@@ -25,10 +26,14 @@ export class EditAssetComponent implements OnInit {
 
   hasStockTicker(asset: Asset): boolean {
     return (
-      asset.assetType === AssetType.Stocks &&
-      asset.ticker &&
-      asset.ticker.trim().length > 0
+      +asset.assetType === this.AssetType.Stocks // &&
+      // asset.ticker// &&
+      // asset.ticker.trim().length > 0
     );
+  }
+
+  onCancel() {
+    this.cancel.emit();
   }
 
   onDelete() {

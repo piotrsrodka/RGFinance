@@ -69,7 +69,7 @@
                 <div class="col-1"><strong>%</strong></div>
             </div>
             <hr class="RGF-hr" />
-            <div *ngFor="let asset of flow.assets" (click)="asset.isEditing = true" class="hoverable">
+            <div *ngFor="let asset of flow.assets" (click)="onAssetClicked(asset)" class="hoverable">
                 <div class="row">
                     <div class="col-8">{{ getAssetIcon(asset.assetType) }} {{ asset.name }}</div>
                     <div class="col-3 d-flex justify-content-end">{{ getFormattedValue(asset) }}&nbsp;{{
@@ -77,14 +77,14 @@
                         }}&nbsp;</div>
                     <div class="col-1 float-right">{{ asset.interest }}</div>
                 </div>
-                <app-edit-asset [asset]="asset" [isVisible]="asset.isEditing" (save)="addOrUpdateAsset(asset)"
-                    (delete)="onDeleteAsset(asset)">
+                <app-edit-asset [asset]="asset" [isVisible]="isVisible(asset)" (save)="addOrUpdateAsset(asset)"
+                    (delete)="onDeleteAsset(asset)" (cancel)="onCancelAssetEdit(asset)">
                 </app-edit-asset>
             </div>
 
             <span *ngIf="!isAddingAsset" (click)="isAddingAsset = true" class="hoverable blue">&plus; Dodaj</span>
             <app-edit-asset [asset]="assetToAdd" [isVisible]="isAddingAsset" (save)="addOrUpdateAsset(assetToAdd)"
-                (delete)="onDeleteAsset(assetToAdd)">
+                (delete)="onDeleteAsset(assetToAdd)" (cancel)="onCancelAssetEdit(assetToAdd)">
             </app-edit-asset>
         </div>
 
@@ -201,8 +201,6 @@
                 </div>
             </div>
             <div class="col-6">
-
-
             </div>
         </div>
 
