@@ -154,11 +154,6 @@
 
     <div class="diagram mb-5">
         <div class="">
-            <strong>&fnof;(<input class="month-input" [(ngModel)]="months" type="number" (change)="getFlow()" />, S, P,
-                W) =
-                &sum;S<sub>i</sub> + m * ( &sum;P<sub>i</sub> - &sum;W<sub>i</sub> )
-            </strong>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <strong>BILANS MIESIĘCZNY: <span [ngClass]="getBalanceColor()">
                     {{ getBalance() | number: '3.0-0'
                     }}&nbsp;{{ currentBaseCurrency }}</span></strong>
@@ -206,16 +201,7 @@
                 </div>
             </div>
             <div class="col-6">
-                <div>
 
-                </div>
-                <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBankruptcy() }} 💸</strong>
-                <strong *ngIf="getBalance() > 0 && isAlreadyMillionaire()">JUŻ JESTEŚ MILIONEREM! 👑</strong>
-                <strong *ngIf="getBalance() > 0 && !isAlreadyMillionaire() && getMillionaireTime()">Zostaniesz
-                    milionerem
-                    za: {{ getMillionaireTime() }} miesięcy! 💰</strong>
-                <strong *ngIf="getBalance() > 0 && !isAlreadyMillionaire() && !getMillionaireTime()">W tym tempie nie
-                    zostaniesz milionerem w ciągu 20 lat 😅</strong>
 
             </div>
         </div>
@@ -231,6 +217,25 @@
 
         <div class="row align-items-start mt-4 mb-5">
             <div class="col-12 d-flex flex-column">
+                <div class="mb-3">
+                    <strong>&fnof;(<input class="month-input" [(ngModel)]="months" type="number"
+                            (change)="getFlow()" />, S,
+                        P,
+                        W) =
+                        &sum;S<sub>i</sub> + m * ( &sum;P<sub>i</sub> - &sum;W<sub>i</sub> )
+                    </strong>
+                </div>
+                <div>
+                    <strong *ngIf="getBalance() < 0">Liczba miesięcy do bankructwa: {{ getBankruptcy() }} 💸</strong>
+                    <strong *ngIf="getBalance() > 0 && isAlreadyMillionaire()">JUŻ JESTEŚ MILIONEREM! 👑</strong>
+                    <strong *ngIf="getBalance() > 0 && !isAlreadyMillionaire() && getMillionaireTime()">Zostaniesz
+                        milionerem
+                        za: {{ getMillionaireTime() }} miesięcy! 💰</strong>
+                    <strong *ngIf="getBalance() > 0 && !isAlreadyMillionaire() && !getMillionaireTime()">W tym tempie
+                        nie
+                        zostaniesz milionerem w ciągu 20 lat 😅</strong>
+
+                </div>
                 <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
 
             </div>

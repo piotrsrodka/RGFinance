@@ -9,6 +9,12 @@ namespace RGFinance.StocksFeature
         public YahooFinanceStockPriceService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+
+            // Yahoo Finance requires User-Agent header
+            if (!_httpClient.DefaultRequestHeaders.Contains("User-Agent"))
+            {
+                _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+            }
         }
 
         public async Task<decimal> GetStockPrice(string ticker)
