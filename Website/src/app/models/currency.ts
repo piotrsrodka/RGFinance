@@ -1,6 +1,9 @@
 export enum Currency {
   PLN = 'PLN',
-  USD = 'USD', 
+  USD = 'USD',
   EUR = 'EUR',
-  GOLD = 'GOLD'
+  GOLD = 'GOLD',
+  BTC = 'BTC',
+  ETH = 'ETH',
+  SOL = 'SOL',
 }

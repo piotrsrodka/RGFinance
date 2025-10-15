@@ -114,6 +114,8 @@ namespace RGFinance.FlowFeature
                 CurrencyType.GOZ => valueObject.Value * forex.Gold,
                 CurrencyType.BTC => valueObject.Value * forex.Btc,
                 CurrencyType.ETH => valueObject.Value * forex.Eth,
+                CurrencyType.SOL => valueObject.Value * forex.Sol,
+                CurrencyType.DOGE => valueObject.Value * forex.Doge,
                 _ => valueObject.Value
             };
         }

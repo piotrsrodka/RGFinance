@@ -5,6 +5,8 @@ export interface Forex {
   gold: number;
   btc: number;
   eth: number;
+  sol: number;
+  doge: number;
 
   // view model
   online: boolean;

@@ -2,7 +2,6 @@
     <h1>Dashboard - finance</h1>
 
     <div class="d-flex">
-
         <span>
             <span *ngIf="shouldShowCurrency(Currency.USD)">USD: <strong>{{
                     getForexRateInBaseCurrency(Currency.USD).toFixed(3)
@@ -22,24 +21,38 @@
             <span *ngIf="forex" title="Ethereum">ETH: <strong>{{
                     getCryptoPrice(forex.eth).toFixed(0)
                     }}</strong> {{ selectedBaseCurrency }}</span>
+            <span *ngIf="forex" title="Solana">, SOL: <strong>{{
+                    getCryptoPrice(forex.sol).toFixed(0)
+                    }}</strong> {{ selectedBaseCurrency }}</span>
         </span>
         <span class="fill-remaining-space">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <span *ngIf="forex?.online">Dane online z <strong title="European Central Bank">ECB</strong>
+            {{forex?.time}}</span>
+        <span *ngIf="!forex?.online">Dane off-line historyczne z {{forex?.time}}</span>
 
-        <select [(ngModel)]="selectedBaseCurrency" (change)="onBaseCurrencyChange()" class="currency-dropdown">
-            <option [value]="Currency.PLN">PLN</option>
-            <option [value]="Currency.USD">USD</option>
-            <option [value]="Currency.EUR">EUR</option>
-        </select>
-
-        <label class="switch">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Base
-            <input type="checkbox" (click)="isBaseCurrency = !isBaseCurrency" />
-            <span class="slider round"></span>
-        </label>
     </div>
 
-    <span *ngIf="forex.online">Dane online z <strong title="European Central Bank">ECB</strong>
-        {{forex.time}}</span>
-    <span *ngIf="!forex.online">Dane off-line historyczne z {{forex.time}}</span>
+    <div class="row">
+        <div class="col-4">
+            <label>Waluta bazowa</label>
+            <select [(ngModel)]="selectedBaseCurrency" (change)="onBaseCurrencyChange()" class="currency-dropdown">
+                <option [value]="Currency.PLN">PLN</option>
+                <option [value]="Currency.USD">USD</option>
+                <option [value]="Currency.EUR">EUR</option>
+            </select>
+        </div>
+        <div class="col-3">
+            <input type="checkbox" class="hidden-checkbox" [(ngModel)]="isBaseCurrency" id="baseCurrency"
+                name="baseCurrency" />
+            <label [class.checked]="isBaseCurrency" for="baseCurrency">Waluta bazowa</label>
+        </div>
+
+        <div class="col-3">
+            <input type="checkbox" class="hidden-checkbox" [(ngModel)]="isIncognito" (change)="onIncognitoChange()"
+                id="incognito" name="incognito" />
+            <label [class.checked]="isIncognito" for="incognito">Incognito</label>
+        </div>
+    </div>
 
     <div class="row my-5">
 
@@ -214,13 +227,14 @@
                 <plotly-plot [data]="pieChart.data" [layout]="pieChart.layout"></plotly-plot>
             </div>
             <div class="col-6 d-flex flex-column">
-                <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+                <plotly-plot [data]="pieChartByType.data" [layout]="pieChartByType.layout"></plotly-plot>
             </div>
         </div>
 
         <div class="row align-items-start mt-4 mb-5">
-            <div class="col-6 d-flex flex-column">
-                <plotly-plot [data]="pieChartByType.data" [layout]="pieChartByType.layout"></plotly-plot>
+            <div class="col-12 d-flex flex-column">
+                <plotly-plot [data]="graph.data" [layout]="graph.layout"></plotly-plot>
+
             </div>
         </div>
     </div>

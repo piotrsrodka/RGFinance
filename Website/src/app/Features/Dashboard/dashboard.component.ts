@@ -33,8 +33,8 @@ export class DashboardComponent implements OnInit {
         textinfo: 'text+percent',
         hoverinfo: 'none',
         domain: {
-          x: [0, 0.8],
-          y: [0, 1],
+          x: [0.1, 0.7],
+          y: [0.0, 1],
         },
       },
     ],
@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit {
         textinfo: 'text+percent',
         hoverinfo: 'none',
         domain: {
-          x: [0, 0.8],
+          x: [0.1, 0.7],
           y: [0, 1],
         },
       },
@@ -109,17 +109,29 @@ export class DashboardComponent implements OnInit {
 
   isEditingAsset = false;
 
-  sumA = () =>
-    this.flow.assets.reduce((sum, item) => sum + item.currentCurrencyValue, 0);
-
-  sumP = () =>
-    this.flow.profits.reduce((sum, item) => sum + item.currentCurrencyValue, 0);
-
-  sumE = () =>
-    this.flow.expenses.reduce(
+  sumA = () => {
+    const sum = this.flow.assets.reduce(
       (sum, item) => sum + item.currentCurrencyValue,
       0
     );
+    return this.isIncognito ? sum / this.INCOGNITO_DIVISOR : sum;
+  };
+
+  sumP = () => {
+    const sum = this.flow.profits.reduce(
+      (sum, item) => sum + item.currentCurrencyValue,
+      0
+    );
+    return this.isIncognito ? sum / this.INCOGNITO_DIVISOR : sum;
+  };
+
+  sumE = () => {
+    const sum = this.flow.expenses.reduce(
+      (sum, item) => sum + item.currentCurrencyValue,
+      0
+    );
+    return this.isIncognito ? sum / this.INCOGNITO_DIVISOR : sum;
+  };
 
   assetToAdd = Utils.getClearAsset();
   profitToAdd: Profit = Utils.getClearProfit();
@@ -127,9 +139,13 @@ export class DashboardComponent implements OnInit {
 
   forex: Forex;
   isBaseCurrency = false;
+  isIncognito = false;
   selectedBaseCurrency = Currency.PLN;
   Currency = Currency; // for template access
   AssetType = AssetType; // for template access
+
+  // Incognito mode divisor - change this value to adjust how much values are divided in incognito mode
+  private readonly INCOGNITO_DIVISOR = 7;
 
   // Filtry dla pie-chart (checkboxy)
   assetTypeFilters = {
@@ -166,9 +182,14 @@ export class DashboardComponent implements OnInit {
   }
 
   getValue(valueObject: ValueObject) {
-    const value = this.isBaseCurrency
+    let value = this.isBaseCurrency
       ? valueObject.currentCurrencyValue
       : valueObject.value;
+
+    if (this.isIncognito) {
+      value = value / this.INCOGNITO_DIVISOR;
+    }
+
     return value;
   }
 
@@ -179,7 +200,7 @@ export class DashboardComponent implements OnInit {
       : valueObject.currency;
 
     // For crypto currencies, show more decimal places
-    if (currency === 'BTC' || currency === 'ETH') {
+    if (currency === 'BTC' || currency === 'ETH' || currency === 'SOL') {
       return value.toFixed(4);
     }
 
@@ -235,13 +256,18 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    this.pieChart.data[0].values = filteredAssets.map(
-      (a) => a.currentCurrencyValue
+    this.pieChart.data[0].values = filteredAssets.map((a) =>
+      this.isIncognito
+        ? a.currentCurrencyValue / this.INCOGNITO_DIVISOR
+        : a.currentCurrencyValue
     );
 
     // Labels (w legendzie): nazwa + wartość
     this.pieChart.data[0].labels = filteredAssets.map((a) => {
-      const value = a.currentCurrencyValue.toLocaleString('en-US', {
+      const rawValue = this.isIncognito
+        ? a.currentCurrencyValue / this.INCOGNITO_DIVISOR
+        : a.currentCurrencyValue;
+      const value = rawValue.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       });
@@ -253,7 +279,10 @@ export class DashboardComponent implements OnInit {
 
     // Hover template: nazwa + wartość + waluta
     this.pieChart.data[0].hovertemplate = filteredAssets.map((a) => {
-      const value = a.currentCurrencyValue.toLocaleString('en-US', {
+      const rawValue = this.isIncognito
+        ? a.currentCurrencyValue / this.INCOGNITO_DIVISOR
+        : a.currentCurrencyValue;
+      const value = rawValue.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       });
@@ -264,6 +293,11 @@ export class DashboardComponent implements OnInit {
   }
 
   onAssetTypeFilterChange() {
+    this.updatePieChart();
+    this.updatePieChartByType();
+  }
+
+  onIncognitoChange() {
     this.updatePieChart();
     this.updatePieChartByType();
   }
@@ -313,11 +347,16 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    this.pieChartByType.data[0].values = types.map((t) => t.total);
+    this.pieChartByType.data[0].values = types.map((t) =>
+      this.isIncognito ? t.total / this.INCOGNITO_DIVISOR : t.total
+    );
 
     // Labels (w legendzie): ikonka + nazwa + wartość
     this.pieChartByType.data[0].labels = types.map((t) => {
-      const value = t.total.toLocaleString('en-US', {
+      const rawValue = this.isIncognito
+        ? t.total / this.INCOGNITO_DIVISOR
+        : t.total;
+      const value = rawValue.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       });
@@ -329,7 +368,10 @@ export class DashboardComponent implements OnInit {
 
     // Hover template
     this.pieChartByType.data[0].hovertemplate = types.map((t) => {
-      const value = t.total.toLocaleString('en-US', {
+      const rawValue = this.isIncognito
+        ? t.total / this.INCOGNITO_DIVISOR
+        : t.total;
+      const value = rawValue.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       });

@@ -4,6 +4,7 @@ using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(RGFContext))]
-    partial class RGFContextModelSnapshot : ModelSnapshot
+    [Migration("20251014194722_ForexSol")]
+    partial class ForexSol
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,9 +108,6 @@ namespace Database.Migrations
                     b.Property<decimal>("Btc")
                         .HasPrecision(28, 8)
                         .HasColumnType("decimal(28,8)");
-
-                    b.Property<decimal>("Doge")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Eth")
                         .HasPrecision(28, 8)

@@ -10,6 +10,8 @@ namespace Database.Entities
         public decimal Gold { get; set; }
         public decimal Btc { get; set; }
         public decimal Eth { get; set; }
+        public decimal Sol { get; set; }
+        public decimal Doge { get; set; }
 
         [NotMapped]
         public bool Online { get; set; }

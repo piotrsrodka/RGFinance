@@ -8,6 +8,8 @@ namespace Database.Entities
         EUR,
         GOZ,  // Gold ounce
         BTC,  // Bitcoin
-        ETH   // Ethereum
+        ETH,   // Ethereum
+        SOL,    // Solana
+        DOGE    // Dogecoin
     }
 }

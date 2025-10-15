@@ -71,8 +71,10 @@ namespace RGFinance.FlowFeature
             decimal goldPricePln = goldPriceUsd * plnusd;
 
             // BTC & ETH
-            var btcPriceUsd = await this.GetBtcPrice("90");
-            var ethPriceUsd = await this.GetBtcPrice("80");
+            var btcPriceUsd = await this.GetCryptoPrice("90");
+            var ethPriceUsd = await this.GetCryptoPrice("80");            
+            var solPriceUsd = await this.GetCryptoPrice("48543");
+            var dogePriceUsd = await this.GetCryptoPrice("2");
 
             var forex = new Forex
             {
@@ -81,7 +83,9 @@ namespace RGFinance.FlowFeature
                 Eur = plneur,
                 Gold = goldPricePln,
                 Btc = btcPriceUsd * plnusd,
-                Eth = ethPriceUsd * plnusd
+                Eth = ethPriceUsd * plnusd,
+                Sol = solPriceUsd * plnusd,
+                Doge = dogePriceUsd * plnusd
             };
 
             var dbForexWithCurrentTime = await this.context.Forexes
@@ -96,7 +100,7 @@ namespace RGFinance.FlowFeature
             return forex;
         }
 
-        private async Task<decimal> GetBtcPrice(string id)
+        private async Task<decimal> GetCryptoPrice(string id)
         {
             var client = new HttpClient();
             string response = await client.GetStringAsync($"https://api.coinlore.net/api/ticker/?id={id}");
