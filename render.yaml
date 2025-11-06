@@ -1,0 +1,43 @@
+services:
+  # MS SQL Database
+  # WARNING: Render doesn't have managed MS SQL Server
+  # This runs SQL Server in a container (expensive, not recommended for production)
+  # Consider: PostgreSQL (free tier) or Azure SQL Database (external)
+  - type: pserv
+    name: rgfinance-db
+    env: docker
+    dockerfilePath: ./WebApi/Dockerfile.db
+    disk:
+      name: sqldata
+      mountPath: /var/opt/mssql
+      sizeGB: 10
+    envVars:
+      - key: SA_PASSWORD
+        sync: false  # Set this in Render dashboard
+      - key: ACCEPT_EULA
+        value: Y
+
+  # .NET Backend API
+  - type: web
+    name: rgfinance-api
+    env: docker
+    dockerfilePath: ./WebApi/Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__RGF
+        value: Server=rgfinance-db:1433;Database=RGFinance;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
+    dependsOn:
+      - rgfinance-db
+
+  # Angular Frontend
+  - type: web
+    name: rgfinance-web
+    env: docker
+    dockerfilePath: ./Website/Dockerfile
+    envVars:
+      - key: API_URL
+        fromService:
+          name: rgfinance-api
+          type: web
+          property: host
